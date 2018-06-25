@@ -1,0 +1,266 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+    h2.aaaaa Manage Teachers
+    .searchForm
+        form(id='userForm', method='get', action='/teachers')
+
+          .row.left_panel
+            .col-sm-4
+              a(href='#addTeacherModal',data-toggle='modal', id='add_teacher_btn').btn.btn-default Teachers
+            .col-sm-4
+              a(href='#actionTeacherModal',data-toggle='modal', id='action_teacher_btn').btn.btn-default Admin Teachers
+            .col-sm-4
+              a(href='#',data-toggle='', id='').btn.btn-default Teachers Activity
+
+          .row.right_panel
+            .col-sm-4
+              a(href='#actionTeacherModal',data-toggle='modal', id='action_teacher_btn').btn.btn-default Action
+            .col-sm-4
+              a(href='#addTeacherModal',data-toggle='modal', id='add_teacher_btn').btn.btn-default Add Teacher
+            .col-sm-4
+              a(href='#',data-toggle='', id='').btn.btn-default Export to CSV
+
+            // .col-sm-9
+            //   input(type='search', placeholder='Search by first name or last name', id='userPlaceholder', name='q', value='#{searchQuery}').form-control.search-bar
+            // .col-sm-1
+            //   button(type='submit', id='recipeSubmit').btn.btn-default Search
+
+    a(href='#editTeacherModal',data-toggle='modal',id='edit_teacher_btn').btn.btn-default.hide Edit Teacher
+
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    if !data[0]
+      br
+      .alert.alert-info.top-buffer
+        h5 No Teachers Found
+
+    if data[0]
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th.col-md-2 
+                        input(type='checkbox' id="ckbCheckAll")
+            th.col-md-2 First Name
+            th.col-md-2 Last Name
+            th.col-md-2 Email
+            th.col-md-2 County
+            th.col-md-2 District
+            th.col-md-2 School
+            th.col-md-2 Created On
+            th.col-md-2 #Students
+            th.col-md-2 Admin Teacher
+            th.col-md-2 App Status
+            th.col-md-2 Actions
+          tbody  
+            each teacher in data
+              tr
+                td
+                   input(type='checkbox' name='teachers_id[]' value='#{teacher._id}' data-mail='#{teacher.email}' class='checkBoxClass')
+                td=teacher.firstName
+                td=teacher.lastName
+                td=teacher.email
+                td=teacher.county_name
+                td=teacher.district_name
+                td=teacher.schoolName
+                td=new Date(teacher.createdIso).toISOString().replace(/T/, ' ').replace(/\..+/, '') 
+                td='-'
+                td=teacher.admin_teacher_email
+                td
+                  if teacher.isLoggedIn == 1
+                    a(class='label label-default', data-toggle='popover' title='#{teacher.loggedintime}') Logged In         
+                  else
+                    span.trash
+                      a(class='teachers-popover-resend', data-toggle='popover', tabindex='0', data-id='#{teacher._id}', data-placement='left',style='cursor:pointer').users-popover.btn.btn-default Re-send Invite                
+                td 
+                  a(style='cursor:pointer', class='teachers-popover-edit', data-id='#{teacher._id}', data-firstname='#{teacher.firstName}', data-lastname='#{teacher.lastName}', data-districtid='#{teacher.distId}',data-countyid='#{teacher.county_id}', data-schoolid='#{teacher.schoolId}', data-email='#{teacher.email}',data-admin_teacher='#{teacher.admin_teacher}')                                                                                             
+                    img(src="/image/edit-icon.png")
+                    //a(style='cursor:pointer', class='teachers-popover-delete', data-toggle='popover', tabindex='0', data-id='#{teacher._id}', data-placement='left')
+                      //img(src="/image/delete-icon.png")
+
+                  
+  include footer
+
+    .teachers-popover-delete-content.hide
+      p Are you sure you want to delete this teacher?
+      hr
+      .teachers-popover-links
+        form(role='form', method='POST', action='/teachers/?_method=DELETE', name='deleteForm')
+          a.btn.btn-default(href='#').teachers-cancel.margin-right-5 Cancel
+          a.btn.btn-primary(href='#').teachers-deleteLink Delete
+
+    .teachers-popover-resend-content.hide
+      p Are you sure you want to re-send the email to download the app?
+      hr
+      .teachers-popover-links
+        form(role='form', method='POST', action='/teachers/?_method=DELETE', name='resendForm')
+          a.btn.btn-default(href='#').teachers-cancel.margin-right-5 Cancel
+          a.btn.btn-primary(href='#').teachers-resendLink Re-Send
+
+    // Add Teacher Modal
+    .modal.fade#addTeacherModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Add a New Teacher
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/teachers/add', method='post', enctype='multipart/form-data', id='addTeacherForm')
+              .row
+                .form-group
+                    label(for="firstName", class="col-sm-3 control-label").schools-mandatory First Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='firstName', id='firstName', maxlength='50')
+              .row
+                .form-group
+                    label(for="lastName", class="col-sm-3 control-label").schools-mandatory Last Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='lastName', id='lastName', maxlength='50')
+              .row
+                .form-group
+                    label(for="email", class="col-sm-3 control-label").schools-mandatory Email Address
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='100 characters max', name='email', id='email', maxlength='100')
+              .row
+                .form-group
+                    label(for="e1", class="col-sm-3 control-label").schools-mandatory County
+                    .col-sm-9
+                      select(id="e1", name="e1")
+                        option
+                        each district in counties
+                          option(value= district._id, name="districts") #{district.name}
+
+              .row
+                .form-group
+                    label(for="e2", class="col-sm-3 control-label").schools-mandatory District
+                    .col-sm-9
+                      select(id="e2", name="e2")
+                        option
+
+              .row
+                .form-group
+                    label(for="e3", class="col-sm-3 control-label").schools-mandatory School
+                    .col-sm-9
+                      select(id="e3", name="e3")
+                        option
+              .row
+                .form-group
+                    label(for="admin_teacher", class="col-sm-3 control-label").schools-mandatory Admin Teacher
+                    .col-sm-9
+                       input(type='checkbox' id='admin_teacher' name='admin_teacher' value='2')
+
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.addTeacherFormBtn.margin-right-10.pull-right Add
+
+
+
+     // Action Modal
+
+    .modal.fade#actionTeacherModal
+      .modal-dialog
+        .modal-content
+          .modal-body
+              .row
+                .form-group
+                    label(for="emailTeacher", class="col-sm-3 control-label")
+                      img(src="/image/mail-icon.png")
+                    .col-sm-9 
+                      a(href='#emailTeacherModal',data-toggle='modal', id='mail_teacher_btn') Email Teacher
+              .row
+                .form-group
+                    label(for="deleteTeacher", class="col-sm-3 control-label")
+                      img(src="/image/delete-icon.png")
+                    .col-sm-9 
+                      a(style='cursor:pointer', class='teachers-popover-delete', data-toggle='popover', tabindex='0', data-placement='left',href='#deleteTeacherModal', id='delete_teacher_btn') Remove Teacher
+                      input.form-control(type='hidden', id='ids_for_delete')
+
+
+    // Edit Teacher Modal
+    .modal.fade#editTeacherModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Edit Teacher
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert-edit(role='alert').hide
+                  p.text-center Please fill the mandatory fields with correct values
+
+          .modal-body
+            form(role='form', action='/teachers/edit', method='post', enctype='multipart/form-data', id='editTeacherForm')
+              .row
+                .form-group
+                    label(for="firstName", class="col-sm-3 control-label").schools-mandatory First Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='editFirstName', id='editFirstName', maxlength='50')
+              .row
+                .form-group
+                    label(for="lastName", class="col-sm-3 control-label").schools-mandatory Last Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='editLastName', id='editLastName', maxlength='50')
+              .row
+                .form-group
+                    label(for="email", class="col-sm-3 control-label").schools-mandatory Email Address
+                    .col-sm-9
+                      input.form-control(type='email', placeholder='100 characters max', name='editEmail', id='editEmail', maxlength='100')
+                      input(type='hidden', name='editTeacherId', id='editTeacherId')
+
+
+              .row
+                .form-group
+                    label(for="editcounty", class="col-sm-3 control-label").schools-mandatory County
+                    .col-sm-9
+                      select(id="editCounty", name='editCounty',class='form-control')
+                        each county in counties
+                          option(value= county._id, name="county") #{county.name}
+
+              .row
+                .form-group
+                    label(for="editdistrict", class="col-sm-3 control-label").schools-mandatory District
+                    .col-sm-9
+                      select(id="editdistrict", name='editdistrict',class='form-control')
+                        option(value= '', name="district") Select District
+
+              .row
+                .form-group
+                    label(for="editschool", class="col-sm-3 control-label").schools-mandatory School
+                    .col-sm-9
+                      select(id="editschool", name='editschool',class='form-control')
+                        option(value= '', name="school") Select School
+
+              .row
+                .form-group
+                    label(for="admin_teacher", class="col-sm-3 control-label").schools-mandatory Admin Teacher
+                    .col-sm-9
+                       input(type='checkbox' id='editadmin_teacher' name='editadmin_teacher' value='2' class='')
+                       
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.editTeacherFormBtn.margin-right-10.pull-right Update
+
+
+

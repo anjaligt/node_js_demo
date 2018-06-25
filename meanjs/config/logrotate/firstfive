@@ -1,0 +1,9 @@
+/home/noder/sites/firstfive/logs/*.log {
+  missingok
+  notifempty
+  size 1024k
+  copytruncate
+  create 700 noder noder
+  maxage 365
+  compress
+}

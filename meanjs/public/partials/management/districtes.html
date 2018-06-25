@@ -1,0 +1,192 @@
+  <div class="right_col" role="main">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                    <h2>{{districtCountyName}} Districts ({{countyDistrictCount}})</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                     <li>
+                        <a href="javascript:void(0)" data-ui-sref="admin.management"><i class="fa fa-long-arrow-left" aria-hidden="true"></i> Back</a>
+                    </li>
+                      <li>
+                      <a href="javascript:void(0)" ng-click="addDistrictForm()"><i class="fa fa-plus"></i> Add District</a>
+                      </li>
+                       
+                       
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+
+                  <div class="x_content">
+ 
+
+                    <div class="table-responsive">
+                      <table id="districtListTable" class="table table-striped jambo_table bulk_action">
+                        <thead>
+                          <tr class="headings">
+                            <th class="column-title">District Name </th>
+                            <th class="column-title">Manage School</th>
+                            <th class="column-title">Action </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                          
+                          <tr ng-repeat="(distIndex,district) in countyDistrictList">
+                            <td class=" ">{{district.name}}</td>
+                            <td class=" ">
+                              <a href="javascript:void(0)" data-ui-sref="admin.managementSchooles({id:district._id,cid:district.countyId})">Manage Schools</a>
+                            </td>
+                             <td class=" ">
+                                <a href="javascript:void(0)" ng-click="editDistrict(distIndex)">
+                                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                                <a href="javascript:void(0)" ng-click="deleteDistrictModalPopup(district._id,district.name)"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                            </td>
+                          </tr>
+                           
+                        </tbody>
+                      </table>
+                      <div class="text-center" ng-show="districtListLoader">
+                         <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+    
+</div>
+
+ 
+
+
+<!--District Delete modal popup-->
+
+        <div class="modal fade" id="deleteDistrictModalPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Header-->
+                    <div ng-show="districtRemoveMsg">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Remove District</h4>
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body">
+                       <h4>Are you sure you want to remove this district?</h4>
+                       <p> {{districtName}}</p>
+                    </div>
+                    <!--Footer-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success margin-top-btn" ng-click="districtRemoveMsg=fals;districtRemoveConfirmModal=true;confirmDistrictDelete=''">Yes, remove</button>
+                    </div>
+
+                    </div>
+
+                    <div ng-show="districtRemoveConfirmModal">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">×</span>
+                          </button>
+                          <h4 class="modal-title">Confirm Removal</h4>
+                      </div>
+                      <!--Body-->
+                      <div class="modal-body">
+                      <label class="control-label">Please type “YES” into the field below to confirm the removal:</label>
+                      <div class="row">
+                      <div class="col-md-4">
+                         <input type="text" class="form-control" name="confirmDistrictDelete" ng-model="confirmDistrictDelete">
+                         </div>
+                         </div>
+                      </div>
+                      <!--Footer-->
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <button type="button" class="btn btn-success margin-top-btn" ng-click="deleteDistrict()" ng-disabled="deleteDistrictBtn">CONFIRM<i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="deleteDistrictBtn"></i></button>
+                      </div>
+
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+
+
+
+<!-- Add district model start -->
+<div class="modal fade" id="addDistrictForm" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    {{formTitle}}
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+             
+                <form name="districtForm"  novalidate>
+                   <div class="row" ng-show="countyFiled">
+                   <div class="form-group">
+                    <label for="countyname" class="col-sm-3 control-label schools-mandatory">County</label>
+                    <div class="col-sm-9">
+                    <select name="countyId" class="form-control" ng-model="e1" required>
+                       <option value="">Select County</option>
+                       <option ng-repeat="countyData in counties" value="{{countyData._id}}">{{countyData.name}}</option>
+                    </select>
+                     
+                            <div ng-show="districtForm.$submitted || districtForm.countyId.$touched">
+                                <span class="text-danger" ng-show="districtForm.countyId.$error.required">County is required.</span> 
+                            </div>
+                    </div>
+                                    </div>
+                  </div><br>
+
+                   <div class="row">
+                   <div class="form-group">
+                    <label for="countyname" class="col-sm-3 control-label schools-mandatory">District Name</label>
+                    <div class="col-sm-9">
+                     <input type="text" data-ng-model="districtName" name="countyname"  class="form-control" placeholder="District name" required="">
+                                    <div ng-show="districtForm.$submitted || districtForm.countyname.$touched">
+                                        <span class="text-danger" ng-show="districtForm.countyname.$error.required">District name is required.</span> 
+                                    </div>
+                                    </div>
+                                    </div>
+                  </div>
+             
+                 <div class="row">
+                         <div id="countyDiv" class="col-sm-9"></div>
+                         <hr>
+                         <div class="row">
+                         <div class="col-sm-12">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                         <button type="submit" ng-show="districtAddBtn" ng-disabled="districtSaveBtn" class="btn btn-success" ng-click="saveDistrict()">Add <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="districtSaveBtn"></i></button>
+
+                          <button type="submit" ng-show="districtUpdateBtn" ng-disabled="districtsUpdateBtn" class="btn btn-success" ng-click="updateDistrict()">Update <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="districtsUpdateBtn"></i></button>
+                     </div>
+                    
+
+              <div class="clearfix"></div>
+ 
+            </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+

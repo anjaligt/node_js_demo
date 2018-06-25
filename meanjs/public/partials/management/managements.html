@@ -1,0 +1,619 @@
+  <div class="right_col" role="main" >
+    
+    <ul class="nav nav-tabs">
+      <li class="tab-class active"><a data-toggle="tab" href="javascript:void(0)" ng-click="changeTab('tab1');getDistrictByName()">Counties({{countyCount}})</a></li>
+      <li class="tab-class"><a data-toggle="tab" href="javascript:void(0)" ng-click="changeTab('tab2');teachersSettings()">App Settings</a></li>
+      </ul>
+
+    <div class="tab-content">
+      <div id="tab1" class="tab-class tab-pane fade in active">
+
+
+        <div class="x_panel">
+                  <div class="x_title">
+                     <ul class="nav navbar-left panel_toolbox">
+                       <li ng-repeat="(alphaIndex,alphabet) in alphabetArr" ><a class="close-link alphabetCls" id="alphabet_{{alphaIndex}}" ng-click="getDistrictByName(alphabet,true,alphaIndex)">{{alphabet}}</a></li>
+                       <li><a href="javascript:void(0)" ng-click="resetAlphabetHighLight()">Reset</a></li>
+                    </ul>
+                    <ul class="nav navbar-right panel_toolbox">
+                       <li><a href="javascript:void(0)" ng-click="openCountyForm()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add County</a></li>
+                       
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+
+                    <div class="table-responsive">
+                      <table id="countyListTable" class="table table-striped jambo_table bulk_action" width="100%" cellpadding="0" cellspacing="1">
+                        <thead>
+                          <tr class="headings">
+                            <th class="column-title">County Name </th>
+                            <th class="column-title">Manage District</th>
+                            <th class="column-title">Action</th>
+                             
+                          </tr>
+                        </thead>
+                         <tbody>
+                        
+                          <tr ng-repeat="(countyIndex,county) in districtsList">
+                            <td class=" ">{{county.name}}</td>
+                            <td class=" ">
+                            <a href="javascript:void(0)" data-ui-sref="admin.managementDestrict({id:'{{county._id}}'})">Manage Districts</a>
+                            </td>
+                            <td class=" ">
+                            <a href="javascript:void(0)" ng-click="editCounty(countyIndex)">
+                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </a>
+                            <a href="javascript:void(0)" ng-click="deleteCountyModalPopup(county._id,county.name)"><i class="fa fa-trash-o" aria-hidden="true"></i></a>
+                            </td>
+                            </td>
+                          </tr>
+                         </tbody>
+                      </table>
+                      <div class="text-center" ng-show="countyListLoader">
+                            <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                          </div>
+                    </div>
+
+                  </div>
+                </div>
+
+
+      </div>
+
+      <!-- App Setting -->
+      <div id="tab2" class="tab-class tab-pane fade">
+        
+             <div class="x_panel">
+                 <!--  <div class="x_title">
+                    <h2>Form Design <small>different form elements</small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                      </li>
+                      <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                        <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">Settings 1</a>
+                          </li>
+                          <li><a href="#">Settings 2</a>
+                          </li>
+                        </ul>
+                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a>
+                      </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                  </div> -->
+                  <div class="x_content">
+                    <br>
+                     <div class="text-center" ng-show="appSettingShow">
+                                    <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true"></i>
+                     </div>
+                    <form ng-show="appSettingForm" id="demo-form2" class="form-horizontal form-label-left" novalidate="">
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Teacher PIN 
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                          <input id="first-name" ng-model="teacherPin" ng-disabled="true" class="form-control col-md-7 col-xs-12" type="text">
+                        </div>
+                        <button type="button" ng-disabled="pinBtnDisables" ng-click="editPin()" class="btn btn-success ">Edit</button>
+                      </div>
+                       <div class="form-group">
+                        <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3">
+                           <select ng-disabled="disableEmailSelectBox" ng-change="selectTeacherMailType()" ng-model="mailType" class="form-control col-md-7 col-xs-12">
+                          <option value="">Email PIN to All Teachers</option>
+                          <option value="all">All</option>
+                          <option value="selectedTeachers">Select Teachers</option>
+                        </select>
+                        <div class="text-center" ng-show="teachersListLoader">
+                           <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true"></i>
+                         </div>
+                        </div>
+                      </div> 
+ 
+                    </form>
+                    <div class="ln_solid"></div>
+
+                     <div ng-show="appSettingForm" class="form-horizontal form-label-left">
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">App Status (Active): 
+                        </label>
+                        <div class="col-md-3 col-sm-3 col-xs-12">
+                           <button type="button" ng-if="appSettingsObj.app_status" ng-disabled="pinBtnDisables" ng-click="activateApp(false,false)" class="btn btn-success ">DEACTIVATE APP (temporarily)</button>
+
+                            <button type="button" ng-if="!appSettingsObj.app_status" ng-disabled="pinBtnDisables" ng-click="activateApp(true,false)" class="btn btn-success ">ACTIVATE APP</button>
+                        </div>
+                       
+                      </div>
+                        
+ 
+                    </div>
+
+                    <div class="ln_solid"></div>
+
+                     <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                       
+                        <label class="control-label  pull-left" for="first-name">Assessment Period for Current Year  
+
+                        </label>
+                        <button type="button" ng-if="appSettingsObj.app_status" ng-click="editAssesment()" class="btn btn-success pull-left ml-20">Edit</button>
+                        <p class="col-md-3col-sm-3 col-xs-12">
+                          App will use these dates to determine when assessment results will be counted as part of the current school year.
+                        </p>
+                        
+                       
+                         
+                      </div>
+
+                      <div>
+
+                         
+                         <div class="col-md-4 col-sm-6 col-xs-12">
+                           <label class="control-label pull-left col-md-2 line-height">From: </label>
+                           <input type="text"  ng-disabled="true" ng-model="assessment_from"  class="control-label col-md-10">
+                         </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                         <label class="control-label pull-left col-md-2 line-height">To: </label>
+                           <input type="text"  ng-disabled="true"  ng-model="assessment_to"  class="control-label col-md-10">
+                        </div>
+                     </div>
+                      
+                       
+
+                  </div>
+                </div>
+              
+
+      </div>
+      <!-- End -->
+ 
+
+
+    </div>
+</div>
+
+
+
+<!-- model start -->
+<div class="modal fade" id="addCounty" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Add New County
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+             
+                <form name="countyForm"  novalidate>
+                   <div class="row">
+                   <div class="form-group">
+                    <label for="countyname" class="col-sm-3 control-label schools-mandatory">County Name</label>
+                    <div class="col-sm-9">
+                     <input type="text" data-ng-model="countyName" name="countyname"  class="form-control" placeholder="County name" required="">
+                                    <div ng-show="countyForm.$submitted || countyForm.countyname.$touched">
+                                        <span class="text-danger" ng-show="countyForm.countyname.$error.required">County name is required.</span> 
+                                    </div>
+                                    </div>
+                                    </div>
+                  </div>
+             
+             <div class="row">
+                         <div id="countyDiv" class="col-sm-9"></div>
+                     </div><hr>
+                         <div class="row">
+                         <div class="col-sm-12">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                         <button type="submit" ng-show="countyAddBtn" ng-disabled="countySaveBtn" class="btn btn-success" ng-click="saveCounty()">Add <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="countySaveBtn"></i></button>
+
+                          <button type="submit" ng-show="countyUpdateBtn" ng-disabled="countySaveBtn" class="btn btn-success" ng-click="updateCounty()">Update <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="countySaveBtn"></i></button>
+                     </div>
+                     </div>
+
+              <div class="clearfix"></div>
+ 
+            </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- model start -->
+<div class="modal fade" id="editPinModal" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                   Edit Information
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                <form name="pinForm"  novalidate>
+                    
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label schools-mandatory">Admin Teacher PIN</label>
+                            <div class="col-sm-9">
+                                <input type="text" numbers-only data-ng-model="teacherSettingPin" name="teacherpin"  class="form-control" placeholder="PIN"  minlength="4" maxlength="4" required="">
+                                PIN must be 4 numeric characters in length.
+                                <div ng-show="pinForm.$submitted || pinForm.teacherpin.$touched">
+                                    <span class="text-danger" ng-show="pinForm.teacherpin.$error.required">PIN is required.</span> 
+                                     <span class="text-danger" ng-show="pinForm.teacherpin.$error.maxlength"> PIN must be 4 numeric characters in length.</span> 
+                                      <span class="text-danger" ng-show="pinForm.teacherpin.$error.minlength"> PIN must be 4 numeric characters in length.</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="countyDiv" class="col-sm-9"></div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-12">
+                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="submit" ng-disabled="pinSaveBtn" class="btn btn-success" ng-click="savePin()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="pinSaveBtn"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Send email model start -->
+<div class="modal fade" id="teacherEmailModel" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" ng-click="resetTeacherEmailSelect()" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Email New PIN
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                
+                <form class="form-horizontal" name="teacherEmail" novalidate>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" ng-disabled="true" name="toFiled" ng-model="teacherEmailForm.to" class="form-control" placeholder="To" required />
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.toFiled.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.toFiled.$error.required">To is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" name="ccFiled" ng-model="teacherEmailForm.cc" class="form-control" placeholder="Cc"  />
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.ccFiled.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.ccFiled.$error.required">Cc is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   name="bccField" placeholder="Bcc" ng-model="teacherEmailForm.bcc" />
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.bccField.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.bccField.$error.required">Bcc is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   name="subject" ng-model="teacherEmailForm.subject" placeholder="Subject" required />
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.email.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.subject.$error.required">Subject is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <div class="col-sm-10">
+                            <textarea name="content" placeholder ="Email body content…" ng-model="teacherEmailForm.message" class="form-control" required></textarea>
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.content.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.content.$error.required">Email body content is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success" ng-disabled="teacherEmailBtn" ng-click="sendMailToTeachers()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="teacherEmailBtn"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- model end -->
+
+
+
+ <!-- model start -->
+                <div class="modal fade custom-width" id="teachersListModal" tabindex="-1" role="dialog" 
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                              <h3>Select Teachers to Send Email to:</h3>
+                                <button type="button" ng-click="resetTeacherEmailSelect()" class="close" 
+                                        data-dismiss="modal">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                              <div class="table-responsive max-size-table"> 
+                                <table class="table table-striped teachers-table " width="100%" cellpadding="0" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                              <input type="checkbox" name="teacherParentChk" id="parentTeacherChk" ng-click="selectAllChk()">
+                                            </th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>County</th>
+                                            <th>School</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="(teacherIndex ,teacherData) in teachersList">
+                                            <td>
+                                              <input type="checkbox" class="teacherListChk" name="teacherChildChk" data-email="{{teacherData.email}}" value="{{teacherData._id}}" id="parentTeacherChk{{teacherIndex}}">
+                                            </td>
+                                            <td>{{teacherData.firstName}}</td>
+                                            <td>{{teacherData.lastName}}</td>
+                                            <td>{{teacherData.email}}</td>
+                                            <td>{{teacherData.county_name}}</td>
+                                            <td>{{teacherData.district_name}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                </div>
+                              <div>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                 <button type="button" class="btn btn-success" ng-click="emailToSelectedTeacher()">Next</button>
+                              </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+
+ <!-- model start -->
+<div class="modal fade" id="editAssesment" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Assessment Period for Current Year
+                </h4>
+                <p>App will use these dates to determine when assessment results will be counted as part of the current school year.</p>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+             
+                <form name="assessmentForm"  novalidate>
+                   <div class="row">
+                   <div class="form-group">
+                      <label class="col-sm-1 control-label schools-mandatory line-height">From</label>
+                      <div class="col-sm-5">
+                       <!-- <input type="text" data-ng-model="assessmentFrom" name="assessmentFrom" 
+                        class="form-control" placeholder="From" required=""> -->
+                        <p class="input-group">
+                          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="assessmentFrom" is-open="popup1.opened" ng-readOnly="true" datepicker-options="dateOptions"  name="assessmentfrom"  show-button-bar="false" placeholder="From" close-text="Close" alt-input-formats="altInputFormats" required />
+                          <span class="input-group-btn">                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
+                        </p>
+                                      <div ng-show="assessmentForm.$submitted || assessmentForm.assessmentfrom.$touched">
+                                          <span class="text-danger" ng-show="assessmentForm.assessmentfrom.$error.required">From date is required.</span> 
+                                      </div>
+                       </div>
+                    </div>
+
+                  </div><br>
+              <div class="row">
+                 <div class="form-group">
+                      <label class="col-sm-1 control-label schools-mandatory line-height">To</label>
+                      <div class="col-sm-5">
+                      <!--  <input type="text" data-ng-model="assessmentTo" name="assessmentTo"  class="form-control" placeholder="To" required=""> -->
+                      <p class="input-group">
+                          <input type="text" class="form-control" placeholder="To" uib-datepicker-popup="{{format}}" name="assessmentto" ng-model="assessmentTo" ng-readOnly="true"  is-open="popup2.opened" datepicker-options="dateOptions"  show-button-bar="false"  close-text="Close" alt-input-formats="altInputFormats" required />
+                          <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open2()"><i class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
+                        </p>
+                                      <div ng-show="assessmentForm.$submitted || assessmentForm.assessmentto.$touched">
+                                          <span class="text-danger" ng-show="assessmentForm.assessmentto.$error.required">To date is required.</span> 
+                                      </div>
+                                      </div>
+                    </div>
+              </div>
+             <div class="row">
+                <div id="countyDiv" class="col-sm-9"></div>
+                <hr>
+                         <div class="row">
+                          <div class="col-sm-5">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                         <button type="submit" ng-disabled="assessmentUpdateBtn" class="btn btn-success" ng-click="updateAssessment()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="assessmentUpdateBtn"></i></button>
+                  </div>
+                     </div>
+                     </div>
+
+              <div class="clearfix"></div>
+ 
+            </form>
+
+            </div>
+
+
+        </div>
+    </div>
+</div> 
+
+
+<!--County Delete modal popup-->
+
+<div class="modal fade" id="deleteCountyModalPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Header-->
+                    <div ng-show="removeCountyMsg">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Remove County</h4>
+                    </div>
+                    <!--Body-->
+                    <div class="modal-body">
+                       <h4>Are you sure you want to remove this county?</h4>
+                       <p>{{countyName}}</p>
+                    </div>
+                    <!--Footer-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success margin-top-btn" ng-click="removeCountyMsg=fals;removeConfirmModal=true;confirmCountyDelete=''">Yes, remove</button>
+                    </div>
+
+                    </div>
+
+                    <div ng-show="removeConfirmModal">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">×</span>
+                          </button>
+                          <h4 class="modal-title">Confirm Removal</h4>
+                      </div>
+                      <!--Body-->
+                      <div class="modal-body">
+                      <label class="control-label">Please type “YES” into the field below to confirm the removal:</label>
+                      <div class="row">
+                      <div class="col-md-4">
+                         <input type="text" class="form-control" name="confirmCountyDelete" ng-model="confirmCountyDelete">
+                         </div>
+                         </div>
+                      </div>
+                      <!--Footer-->
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                          <button type="button" class="btn btn-success margin-top-btn" ng-click="deleteCounty()" ng-disabled="resendPasswordBtn">CONFIRM<i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="resendPasswordBtn"></i></button>
+                      </div>
+
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="appStatusChangeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <!--Content-->
+                <div class="modal-content">
+                    <!--Header-->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                         <h4 class="modal-title" id="myModalLabel">App Status</h4>
+                    </div> 
+                    <!--Body-->
+                    <div class="modal-body">
+                       <h4>{{appStatusAlertMessage}}</h4>
+                      
+                    </div>
+                    <!--Footer-->
+                     <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success margin-top-btn" ng-click="activateApp(true,true)">CONFIRM</button>
+                         </div>
+ 
+                     
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+ 

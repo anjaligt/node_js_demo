@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html data-ng-app="firstFiveApp"><head>
+<!-- <link rel="stylesheet" type="text/css" href="./assets/css/custom.css"> -->
+ <link href="./build/build.css" rel="stylesheet">
+ <link rel="stylesheet" type="text/css" href="./assets/css/datatables.min.css"/>
+ <link rel="stylesheet" type="text/css" href="./assets/css/bootstrap-select.min.css"/>
+ <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link href="./assets/css/font-awesome.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="./assets/css/green.css" rel="stylesheet">
+    <!-- bootstrap-progressbar -->
+    <link href="./assets/css/bootstrap-progressbar-3.css" rel="stylesheet">
+    <!-- jVectorMap -->
+    <link href="./assets/css/jquery-jvectormap-2.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="./assets/css/custom.css" rel="stylesheet">
+  
+	<style>
+	body {
+	    height: calc(100% - 51px);
+	    box-sizing: content-box;
+	    min-height: 600px;
+	}
+	</style>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+	<title>kindergarten admin</title>
+    <!-- <base href="/"> -->
+	<!-- Mobile Specific -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	 
+</head>
+<body class="nav-md">
+<main ng-controller="BaseController">
+<div class="container body">
+<div class="main_container">
+         <div ui-view="left"></div>
+          <div ui-view="header"></div>
+          <div ui-view="content"></div>
+           <div ui-view="footer"></div>
+         </div>
+         </div>
+	 </main>
+
+<script type="text/javascript" src="./build/all.min.js"></script>
+<script type="text/javascript" src="./assets/js/datatables.min.js"></script>
+<script type="text/javascript" src="./assets/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="./assets/js/bootbox.js"></script>
+<script type="text/javascript" src="./assets/js/ngBootbox.min.js"></script>
+<script type="text/javascript" src="./assets/js/ui-bootstrap-tpls.js"></script>
+
+<script type="text/javascript" src="./app.js"></script>
+<script type="text/javascript" src="./config.js"></script>
+<script type="text/javascript" src="./scripts/common/filters/CommonFilter.js"></script>
+<script type="text/javascript" src="./scripts/common/directives/CommonDirective.js"></script>
+<script type="text/javascript" src="./scripts/common/services/UtilityService.js"></script>
+<script type="text/javascript" src="./scripts/common/controllers/BaseController.js"></script>
+<script type="text/javascript" src="./scripts/auth/services/AuthService.js"></script>
+<script type="text/javascript" src="./scripts/auth/controllers/AuthController.js"></script>
+<script type="text/javascript" src="./scripts/teacher/services/TeacherService.js"></script>
+<script type="text/javascript" src="./scripts/teacher/controllers/TeacherController.js"></script>
+
+<script type="text/javascript" src="./scripts/report/services/ReportService.js"></script>
+<script type="text/javascript" src="./scripts/report/controllers/ReportController.js"></script>
+
+<script type="text/javascript" src="./scripts/management/services/ManagementService.js"></script>
+<script type="text/javascript" src="./scripts/management/controllers/ManagementController.js"></script>
+
+<script type="text/javascript" src="./scripts/billing/services/BillingService.js"></script>
+<script type="text/javascript" src="./scripts/billing/controllers/BillingController.js"></script>
+
+<script type="text/javascript" src="./scripts/dashboard/services/DashboardService.js"></script>
+<script type="text/javascript" src="./scripts/dashboard/controllers/DashboardController.js"></script>
+</body>
+</html>

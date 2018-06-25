@@ -1,0 +1,149 @@
+  <div class="right_col" role="main" >
+<div class="x_panel">
+                  <div class="x_title">
+                    <h2>Download Reports</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <br>
+                    <form id="demo-form2" data-parsley-validate="" class="form-horizontal form-label-left">
+
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Select County  
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select  class="form-control col-md-7 col-xs-12" ng-change="getDistrictsByCounty()" name="countyId" ng-model="countyId">
+                          	<option value="">Select County</option>
+                          	<option ng-repeat="county in countyList" value="{{county._id}}">{{county.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="last-name">Select District  
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                           <select  class="form-control col-md-7 col-xs-12" ng-change="getSchoolByDistrict()" name="districtId" ng-model="districtId">
+                          	<option value="">Select District</option>
+                          	<option ng-repeat="district in districtList" value="{{district._id}}">{{district.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Select School</label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                          <select  class="form-control col-md-7 col-xs-12" ng-change="getTeachersBySchoole()" name="schoolId" ng-model="schoolId">
+                          	<option value="">Select School</option>
+                          	<option ng-repeat="school in schoolList" value="{{school._id}}">{{school.name}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12">Select Teacher  
+                        </label>
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                           <select  class="form-control col-md-7 col-xs-12" name="teacherId" ng-model="teacherId">
+                          	<option value="">Select Teacher</option>
+                          	<option ng-repeat="teacher in teachersList" value="{{teacher._id}}">{{teacher.firstName+' '+teacher.lastName}}</option>
+                          </select>
+                        </div>
+                      </div>
+                       
+                      
+                    </form>
+                  </div>
+                </div>
+
+
+
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2>Download Reports with answers</h2>
+                      
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div class="">
+                        <ul class="to_do">
+                          <li>
+                           <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadAllCountiesBtn" type="button" ng-click="getAllCountyReport()">All Counties</button>
+							</div>
+                          </li>
+                          <li>
+                            <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadCountyReportBtn" type="button">Download County Report</button>
+							</div>
+                          </li>
+                            
+                          <li>
+                            <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadDistrictReportBtn" type="button">download Districts Report</button>
+							</div>
+                          </li>
+
+                          <li>
+                             <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadSchoolesReportBtn"  type="button">Download Schooles Report</button>
+							</div>
+                          </li>
+
+                          <li>
+                             <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block"  ng-disabled="downloadTeachersReportBtn" type="button">Download Teachers Report</button>
+							</div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6 col-xs-12">
+                  <div class="x_panel">
+                    <div class="x_title">
+                      <h2>Download Reports without answers</h2>
+                      
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+
+                      <div class="">
+                        <ul class="to_do">
+                          <li>
+                           <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadAllCountiesBtn" type="button" ng-click="getAllFormateCountyReport()">All Counties</button>
+							</div>
+                          </li>
+                          <li>
+                            <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" type="button" ng-disabled="downloadCountyReportBtn">Download County Report</button>
+							</div>
+                          </li>
+                            
+                          <li>
+                            <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadDistrictReportBtn" type="button">download Districts Report</button>
+							</div>
+                          </li>
+
+                          <li>
+                             <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadSchoolesReportBtn" type="button">Download Schooles Report</button>
+							</div>
+                          </li>
+
+                          <li>
+                             <div class="bd-example" data-example-id="">
+							<button class="btn btn-primary btn-lg btn-block" ng-disabled="downloadTeachersReportBtn"  type="button">Download Teachers Report</button>
+							</div>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+</div>

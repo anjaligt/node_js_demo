@@ -1,0 +1,18 @@
+div.navbar.navbar-inverse.navbar-fixed-top(role="navigation")
+  div.navbar-inner
+    div.container
+      a.navbar-brand(href="/") First Five
+      ul.nav.navbar-nav
+        li(class=typeof teachers === "undefined" ? undefined : "active")
+          a(href="/teachers") Teachers
+        li(class=typeof managements === "undefined" ? undefined : "active")
+          a(href="/management") Manaegement
+        li(class=typeof billings === "undefined" ? undefined : "active")
+          a(href="#") Billing
+        li(class=typeof reports === "undefined" ? undefined : "active")
+          a(href="/reports") Reports
+        // li(class=typeof schools === "undefined" ? undefined : "active")
+        //   a(href="/schools") Schools
+        
+      p.navbar-text.navbar-right
+        a.navbar-link(href="/logout", ) Logout

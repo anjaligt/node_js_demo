@@ -1,0 +1,165 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    h2.aaaaa
+          .row.left_panel
+            .col-sm-6
+              a(href='#', id='disctricts_btn').btn.btn-default Districts (#{districts_count})
+            .col-sm-4
+              a(href='#',id='app_setting_btn').btn.btn-default App Settings
+
+          .row.right_panel
+            .col-sm-4
+              a(href='#addDistrictModal',data-toggle='modal', id='add_county_btn').btn.btn-default +Add New District
+  
+
+  div.search_result
+  
+            if data[0]
+                table.table.table-striped.table-responsive
+                  thead
+                    tr
+                      th.col-md-2 District Name
+                      th.col-md-6 Action 
+                  each districts in data
+                    tr
+                      td=districts.name
+                      td
+                        a(style='cursor:pointer',data-id='#{districts._id}',data-name='#{districts.name}',data-county_id='#{districts.countyId}').edit_single_district Edit | 
+                        a(style='cursor:pointer',data-id='#{districts._id}').delete_single_district Delete |  
+                        a(style='cursor:pointer',data-id='#{districts._id}', href='/manage_schools/'+districts._id).manage_schools Manage Schools
+
+            else
+             h2 Districts Not Found For This County...
+
+
+   // Add Teacher Modal
+  .modal.fade#addDistrictModal
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h4.modal-title
+            .row
+              .col-md-12.add-school Edit District
+                button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+            .row
+              .alert2.alert-danger.teacher-alert(role='alert').hide
+                p.text-center Please fill the mandatory fields
+
+        .modal-body
+          form(role='form', action='/districts/add', method='post', id='add_district_form')
+
+            .row
+                .form-group
+                    label(for="county_id", class="col-sm-3 control-label").schools-mandatory County
+                    .col-sm-9
+                      select(id="e1", name="e1",required="required").form-control
+                        option(value="",) --Select County--
+                        each counties in data1
+                          option(value= counties._id) #{counties.name}
+
+            .row
+              .form-group
+                  label(for="districtname", class="col-sm-3 control-label").schools-mandatory District Name
+                  .col-sm-9
+                    input.form-control(type='text', placeholder='50 characters max', name='district_name', id='add_district_name', maxlength='50',required='required', autocomplete='off')
+                    input.form-control(type='hidden', id='add_district_id', name='district_id')
+                    input.form-control(type='hidden', id='add_district_check')
+            .row
+              .col-sm-9#addDistDiv
+
+            hr
+            .row
+              .col-sm-12
+                button(type='submit').btn.btn-primary.addDistrictbtn.margin-right-10.pull-right Add
+
+
+
+  // Delete district model
+  .modal.fade#deleteDistrictModal
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h4.modal-title
+            .row
+              .col-md-12.add-school Confirm Removal
+                button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+            .row
+              .alert2.alert-danger.teacher-alert(role='alert').hide
+                p.text-center Please fill the mandatory fields
+
+        .modal-body
+          form(role='form', action='/district/delete', method='post', enctype='multipart/form-data', id='edit_district_form')
+            .row
+              .form-group
+                  .col-sm-9 Please type "YES" into the field below to confirm the removal:
+            .row
+              .form-group
+                  .col-sm-9
+                    input.form-control(type='text', name='confirm_district_delete', id='confirm_district_delete',required='required', autocomplete='off')
+                    input.form-control(type='hidden', id='delete_district_id', name='deleteDistrictId')
+
+            hr
+            .row
+              .col-sm-12
+                button(type="button", data-dismiss="modal").btn.btn-default Close
+                button(type='submit').btn.btn-primary.deleteDistrictbtn.margin-right-10.pull-right Confirm
+
+
+  
+     // Edit Teacher Modal
+  .modal.fade#editDistrictModal
+    .modal-dialog
+      .modal-content
+        .modal-header
+          h4.modal-title
+            .row
+              .col-md-12.add-school Edit District
+                button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+            .row
+              .alert2.alert-danger.teacher-alert(role='alert').hide
+                p.text-center Please fill the mandatory fields
+
+        .modal-body
+          form(role='form', action='/districts/edit', method='post', enctype='multipart/form-data', id='edit_district_form')
+            .row
+              .form-group
+                  label(for="districtname", class="col-sm-3 control-label").schools-mandatory District Name
+                  .col-sm-9
+                    input.form-control(type='text', placeholder='50 characters max', name='district_name', id='edit_district_name', maxlength='50',required='required', autocomplete='off')
+                    input.form-control(type='hidden', id='edit_district_id', name='district_id')
+                    input.form-control(type='hidden', id='edit_district_check')
+            .row
+              .col-sm-9#DistDiv
+
+            hr
+            .row
+              .col-sm-12
+                button(type='submit').btn.btn-primary.editDistrictbtn.margin-right-10.pull-right Add
+
+
+ 
+
+
+
+
+  include footer
+
+

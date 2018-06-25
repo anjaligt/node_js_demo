@@ -1,0 +1,98 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    h2.aaaaa
+          .row.left_panel
+            .col-sm-6
+              a(href='/teachers', id='counties_btn').btn.btn-default Counties (#{counties_count})
+            .col-sm-4
+              a(href='#',id='app_setting_btn').btn.btn-default App Settings
+
+          .row.right_panel
+            .col-sm-4
+              a(href='#addcountiesModal',data-toggle='modal', id='add_county_btn').btn.btn-default +Add New County 
+
+
+  h2.alphabet 
+    .row
+       a(href='javascript:void(0)',id='county_by_name_search') A  
+       a(href='javascript:void(0)',id='county_by_name_search') B  
+       a(href='javascript:void(0)',id='county_by_name_search') C  
+       a(href='javascript:void(0)',id='county_by_name_search') D  
+       a(href='javascript:void(0)',id='county_by_name_search') E  
+       a(href='javascript:void(0)',id='county_by_name_search') F  
+       a(href='javascript:void(0)',id='county_by_name_search') G  
+       a(href='javascript:void(0)',id='county_by_name_search') H  
+       a(href='javascript:void(0)',id='county_by_name_search') I  
+       a(href='javascript:void(0)',id='county_by_name_search') J  
+       a(href='javascript:void(0)',id='county_by_name_search') K  
+       a(href='javascript:void(0)',id='county_by_name_search') L  
+       a(href='javascript:void(0)',id='county_by_name_search') M  
+       a(href='javascript:void(0)',id='county_by_name_search') N  
+       a(href='javascript:void(0)',id='county_by_name_search') O  
+       a(href='javascript:void(0)',id='county_by_name_search') P  
+       a(href='javascript:void(0)',id='county_by_name_search') Q  
+       a(href='javascript:void(0)',id='county_by_name_search') R  
+       a(href='javascript:void(0)',id='county_by_name_search') S  
+       a(href='javascript:void(0)',id='county_by_name_search') T  
+       a(href='javascript:void(0)',id='county_by_name_search') U  
+       a(href='javascript:void(0)',id='county_by_name_search') V  
+       a(href='javascript:void(0)',id='county_by_name_search') W  
+       a(href='javascript:void(0)',id='county_by_name_search') X  
+       a(href='javascript:void(0)',id='county_by_name_search') Y  
+       a(href='javascript:void(0)',id='county_by_name_search') Z  
+  
+
+
+       // Add Teacher Modal
+    .modal.fade#addcountiesModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Add New County
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/counties/add', method='post', enctype='multipart/form-data', id='addCountyForm')
+              .row
+                .form-group
+                    label(for="countyname", class="col-sm-3 control-label").schools-mandatory County Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='countyname', id='countyname', maxlength='50',required='required', autocomplete='off')
+                      input.form-control(type='hidden', id='county_check', autocomplete='off')
+              .row
+                .col-sm-9#countyDiv
+
+              
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.addCountyFormBtn.margin-right-10.pull-right Add
+
+
+
+
+
+  include footer
+
+

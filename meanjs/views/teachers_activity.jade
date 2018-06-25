@@ -1,0 +1,82 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+    h2.aaaaa Manage Teachers
+    .searchForm
+        form(id='userForm', method='get', action='/teachers')
+          .row.left_panel
+            .col-sm-4
+              a(href='/teachers', id='teacher_btn').btn.btn-default Teachers (#{normal_teacher_count})
+            .col-sm-4
+              a(href='#',id='admin_teacher_btn').btn.btn-default Admin Teachers (#{admin_teacher_count})
+            .col-sm-4
+              a(href='/teachers_activity',id='teacher_activity_btn').btn.btn-default Teachers Activity
+
+          .row.right_panel
+            .col-sm-4
+              select(id="year", name="year")
+                  option(value='2015-2016') 2015-2016
+                  option(value='2016-2017') 2016-2017
+            .col-sm-4
+              a(href='',data-toggle='modal', id='').btn.btn-default Send Mail
+            .col-sm-4
+              a(href='#',data-toggle='', id='').btn.btn-default Export to CSV
+
+          // .search_panel
+          //   .col-sm-9
+          //     input(type='search', placeholder='Search by first name or last name', id='userPlaceholder', name='q', value='#{searchQuery}').form-control.search-bar
+          //   .col-sm-1
+          //     button(type='submit', id='recipeSubmit').btn.btn-default Search
+
+    a(href='#editTeacherModal',data-toggle='modal',id='edit_teacher_btn').btn.btn-default.hide Edit Teacher
+
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    if !data[0]
+      br
+      .alert.alert-info.top-buffer
+        h5 No Teachers Found
+
+    if data[0]
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th.col-md-2 
+                        input(type='checkbox' id="ckbCheckAll")
+            th.col-md-2 Teachers
+            th.col-md-2 Created On
+            th.col-md-2 County
+            th.col-md-2 District
+            th.col-md-2 School
+            th.col-md-2 #Students
+            th.col-md-2 Literacy Completed
+            th.col-md-2 Numeracy Completed
+            th.col-md-2 Soc/Emo/Phy Completed
+          tbody  
+            each teacher in data
+              tr
+                td
+                   input(type='checkbox' name='teachers_id[]' value='#{teacher._id}' data-mail='#{teacher.email}' class='checkBoxClass')
+                td=teacher.firstName+' '+teacher.lastName
+                td=new Date(teacher.createdIso).toISOString().replace(/T/, ' ').replace(/\..+/, '')
+                td=teacher.county_name
+                td=teacher.district_name
+                td=teacher.schoolName
+                td=teacher.student_count
+                td=teacher.literacy_count
+                td=teacher.numeracy_count              
+                td=teacher.social_count
+                  
+  include footer
+

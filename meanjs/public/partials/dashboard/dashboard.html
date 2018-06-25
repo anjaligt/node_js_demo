@@ -1,0 +1,997 @@
+<div class="right_col" role="main" >
+    <!-- <div class="text-center"><h1>Coming Soon...</h1></div> -->     
+
+
+
+    <ul class="nav nav-tabs">
+        <li class="tab-class active"><a data-toggle="tab" href="javascript:void(0)" ng-click="changeTab('tab1');teacherDashboardCharts();getCountiesDistrictsAndSchools()">Dashboard</a></li>
+        <li class="tab-class"><a data-toggle="tab" href="javascript:void(0)" ng-click="changeTab('tab2')">Detailed Reports</a></li>
+        <li class="tab-class"><a data-toggle="tab" href="javascript:void(0)" ng-click="changeTab('tab3')">Tools</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="tab1" class="tab-class tab-pane fade in active">
+            <div class="x_panel" id="dashboardDiv">
+                <div class="x_title" ng-hide="dashboardLoader">
+                     <ul class="nav navbar-left panel_toolbox">
+                        <li>Dashboard</li>
+                    </ul> 
+                      <ul class="nav navbar-right panel_toolbox">
+                         <li> Year
+                          <select name="dashboardYear" ng-change="teacherDashboardCharts();getAllBillingCounties()" ng-model="dashboardYear">
+                               <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                          </select>
+                            <!-- <a class="close-link" href="javascript:void(0)" ng-disabled="disableExportBtn" ng-click="getDivElement()">Export to PDF</a> -->
+                         </li>
+                     
+                      </ul>            
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="text-center" ng-show="dashboardLoader">
+                        <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                    </div>
+                    <div ng-show="dashboardPage">  
+                        <div class="row tile_count">
+                            <div class="col-md-2 col-sm-4 col-xs-6  width-custom-icon">
+                            <img src="./assets/images/teachers-registers.png" alt="">
+                              <div class="span-box">
+                                <span class="count"><b>{{registered_teachers}}</b></span>
+                                <span class="count_top">Registered Teachers</span>
+                              </div> 
+                            </div>
+                            <!--tile_stats_count-->
+                            <div class="col-md-2 col-sm-4 col-xs-6 width-custom-icon">
+                            <img src="./assets/images/teachers-loggedin.png" alt="">
+                            <div class="span-box">
+                                <span class="count"><b>{{loggedin_teachers}}</b></span>
+                                <span class="count_top">Teachers Logged In</span>
+                            </div>    
+                            </div>
+                            <div class="col-md-2 col-sm-4 col-xs-6 width-custom-icon">
+                            <img src="./assets/images/student.png" alt=""  >
+                              <div class="span-box">  
+                                <span class="count"><b>{{total_students}}</b></span>
+                                <span class="count_top">Students</span>
+                              </div>  
+                            </div>
+                            <div class="col-md-2 col-sm-4 col-xs-6 width-custom-icon">
+                             <img src="./assets/images/ips.png" alt="">
+                                <div class="span-box">
+                                    <span class="count"><b>{{ipe_percent}}% IEP {{ps_percent}}% PS {{tk_percent}}% TK</b></span>
+                                    <span class="count_top"></span>
+                               </div> 
+                                
+                            </div>
+                            <div class="col-md-2 col-sm-4 col-xs-6  width-custom-icon">
+                             <img src="./assets/images/gross-profit.png" alt="">
+                                <div class="span-box">
+                                    <span class="count"><b>${{billingGrossProfit}}</b></span>
+                                    <span class="count_top">Gross Revenue</span>
+                                </div>
+                                
+                            </div>
+                            <div class="col-md-2 col-sm-4 col-xs-6  width-custom-icon">
+                             <img src="./assets/images/countries.png" alt="">
+                                <div class="span-box">
+                                    <span class="count"><b>{{total_counties}}</b></span>
+                                    <span class="count_top">Counties</span>
+                               </div> 
+                            </div>
+
+                            <div class="col-md-2 col-sm-4 col-xs-6  width-custom-icon">
+                             <img src="./assets/images/districts.png" alt="" >
+                               <div class="span-box">
+                                <span class="count"><b>{{total_districts}}</b></span>
+                                <span class="count_top">Districts</span>
+                              </div>  
+                            </div> 
+
+
+                            <div class="col-md-2 col-sm-4 col-xs-6 width-custom-icon">
+                             <img src="./assets/images/school.png" alt="">
+                               <div class="span-box">
+                                <span class="count"><b>{{total_schooles}}</b></span>
+                                <span class="count_top">Schools</span>
+                              </div>  
+                            </div>
+                        </div>
+                        <div class="row">
+
+                              <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="x_panel tile fixed_height_asmnt_comp_row">
+                                  <div class="x_title">
+                                    <h2>Assessments Completion Progress (last 7days) </h2>
+                                     <div class="clearfix"></div>
+                                  </div>
+                                  
+                                    <div class="col-md-10">
+                                        <div style="height: 300px !important; width: 300px !important;">
+                                            <canvas id="bar" class="chart chart-bar"
+                                                    chart-data="assessmentData" chart-labels="assessmentLabels" chart-colours="assessmentColors">
+                                                  </canvas>
+                                            </div>
+                                           </div>
+                                           <div class="col-md-2 margin-top-88">
+                                              <table class="tile_info">
+                                                <tbody><tr>
+                                                  
+                                                  <td> 
+                                                     <p><i class="fa fa-square brown-color"></i>Literacy</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  
+                                                  <td> 
+                                                     <p><i class="fa fa-square blue-color"></i>Numeracy</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                   
+                                                  <td>
+                                                     <p><i class="fa fa-square yellow-color"></i>Soc/Phy/Emo</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                   
+                                                  
+                                                
+                                          </tr>
+                                        </tbody></table>
+                                        </div>
+                                  
+                                </div>
+                              </div> 
+
+                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                <div class="x_panel tile fixed_height_asmnt_comp_row">
+                                    <div class="x_title">
+                                        <h2>Consolidated Green, Yellow & Red Lights</h2>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content">
+                                        <table class="" style="width:100%">
+                                            <tbody>
+                                                <tr>
+                                                    <th class="text-center">
+                                                        <p>Literacy</p>
+                                                    </th>
+                                                    <th class="text-center">
+                                                        <p class="">Numeracy</p>
+                                                    </th>
+                                                    <th class="text-center">      
+                                                        <p class="">Social</p>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div style="width: 150px; height: 150px;     margin-left: 22px;">
+                                                            <canvas id="doughnutliteracy"  class="chart chart-doughnut"
+                                                                    chart-data="consolidate" chart-labels="consolidateLabels" chart-colours="consolidateColors">
+                                                            </canvas>
+                                                             <div class="col-md-12 " style="padding: 0px;">
+                                                                  <table class="tile_info">
+                                                                    <tbody><tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square red-color"></i>Poor {{consolidate[0]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square yellow-color"></i>Good {{consolidate[1]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      <td>
+                                                                         <p><i class="fa fa-square green-color"></i>Very Good {{consolidate[2]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      
+                                                                    
+                                                              </tr>
+                                                            </tbody></table>
+                                        </div>
+                                                        </div> 
+                                                    </td>
+                                                    <td>
+                                                        <div style="width: 150px; height: 150px;     margin-left: 22px;">
+                                                            <canvas id="doughnutliteracy" class="chart chart-doughnut"
+                                                                    chart-data="numeracy" chart-labels="consolidateLabels" chart-colours="consolidateColors">
+                                                            </canvas>
+                                                             <div class="col-md-12" style="padding: 0px;">
+                                                                  <table class="tile_info">
+                                                                    <tbody><tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square red-color"></i>Poor {{numeracy[0]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square yellow-color"></i>Good {{numeracy[1]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      <td>
+                                                                         <p><i class="fa fa-square green-color"></i>Very Good {{numeracy[2]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      
+                                                                    
+                                                              </tr>
+                                                            </tbody></table>
+                                        </div>
+                                                        </div> 
+
+                                                    </td>
+                                                    <td>
+
+                                                        <div style="width: 150px; height: 150px;     margin-left: 22px;">
+                                                            <canvas id="doughnutliteracy" class="chart chart-doughnut"
+                                                                    chart-data="socials" chart-labels="consolidateLabels" chart-colours="consolidateColors">
+                                                            </canvas>
+                                                             <div class="col-md-12" style="padding: 0px;">
+                                                                  <table class="tile_info">
+                                                                    <tbody><tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square red-color"></i>Poor {{socials[0]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                      
+                                                                      <td> 
+                                                                         <p><i class="fa fa-square yellow-color"></i>Good {{socials[1]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      <td>
+                                                                         <p><i class="fa fa-square green-color"></i>Very Good {{socials[2]}}%</p>
+                                                                      </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                       
+                                                                      
+                                                                    
+                                                              </tr>
+                                                            </tbody></table>
+                                        </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+
+                                    </div>
+                                </div>
+                            </div> 
+
+                        </div>
+
+
+
+                        <br> 
+
+
+
+                        <div class="row margin-top-16">
+                         <div class="col-md-8 col-sm-8 col-xs-12">
+                          <div class="col-md-6 col-sm-6 col-xs-12 padding-left-0">
+                                <div class="x_panel tile fixed_height_320" style="padding: 10px 5px;">
+                                    <div class="x_title">
+                                        <h2>Teachers Participation</h2>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content">
+
+                                        <table class="" style="width:100%">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+                                                        <div style="width: 185px; height: 200px; margin-top:47px;">
+                                                            <canvas id="doughnut" class="chart chart-doughnut"
+                                                                    chart-data="reportTeacherData" chart-labels="labels" chart-colours="reportTeachColors">
+                                                            </canvas>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <p><i class="fa fa-square yellow-color"></i> Teachers Registered {{reportTeacherData[0]}}</p>
+                                                        <p><i class="fa fa-square brown-color"></i> Teachers Logged In {{reportTeacherData[1]}}</p>
+
+                                                    </td>
+
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="col-md-6 col-sm-6 col-xs-12 padding-right-0">
+                                    <div class="x_panel tile fixed_height_320 overflow_hidden" style="padding: 10px 5px;">
+                                      <div class="x_title">
+                                        <h2>Global Assessments Completion</h2>
+                                        
+                                        <div class="clearfix"></div>
+                                      </div>
+                                      <div class="x_content">
+                                        <table class="" style="width:100%">
+                                          <tbody><tr>
+                                            <th>
+                                              
+                                            </th>
+                                            <th>
+                                               
+                                              <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+                                                
+                                              </div>
+                                            </th>
+                                          </tr>
+                                          <tr>
+                                            <td> 
+                                            <div style="width: 150px; height: 200px; margin-top: 47px;">
+                                                            <canvas id="doughnut7" class="chart chart-doughnut"
+                                                                    chart-data="globalAssessmentData" chart-labels="globalAssessmentLabels" chart-colours="globalAssessmentColors">
+                                                            </canvas>
+                                                            <div class="donut-inner">
+                                                                 <span>{{total_students}}</span>
+                                                            </div>
+                                                            
+                                                        </div>
+                                            </td>
+                                            <td>
+                                              <table class="tile_info">
+                                                <tbody><tr>
+                                                  
+                                                  <td> 
+                                                     <p><i class="fa fa-square brown-color"></i>Literacy {{globalAssessmentData[3]}}</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  
+                                                  <td> 
+                                                     <p><i class="fa fa-square blue-color"></i>Numeracy {{globalAssessmentData[1]}}</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                   
+                                                  <td>
+                                                     <p><i class="fa fa-square yellow-color"></i>Soc/Phy/Emo {{globalAssessmentData[2]}}</p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                   
+                                                  <td>
+                                                       <p><i class="fa fa-square dark-yellow-color"></i>Not Assessed {{globalAssessmentData[0]}}</p>
+                                                  </td>
+                                                </tr>
+                                                
+                                              </tbody></table>
+                                            </td>
+                                          </tr>
+                                        </tbody></table>
+                                      </div>
+                                    </div>
+                                  </div> 
+                         </div>
+
+                                <div class="col-md-4 col-sm-4 col-xs-12">
+                                <div class="x_panel tile fixed_height_320">
+                                    <div class="x_title">
+                                        <h2>Gross Revenue per County </h2>
+
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content">
+
+                                     <div class="table-custom-height">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>County</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="(coountyIndex, countyBillingData) in billingCountyList">
+                                                    <th>{{countyBillingData.name.substr(0,1).toUpperCase()+countyBillingData.name.substr(1);}}</th>
+                                                    <td>${{countyBillingData.amount}}</td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div id="tab2" class="tab-class tab-pane fade">
+
+
+
+            <div class="x_panel">
+                <div class="x_title">
+                         Year
+                         <select name="detailedReportYear" ng-model="detailedReportYear">
+                              <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                          </select>                    
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    
+                    <div class="">
+                        <ul class="to_do">
+
+                            <li>
+                                <p>
+                                    <a href="javascript:void(0)" ng-click="countyFilterForm('Teacher')">Teachers by County / District / School</a>
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <a href="javascript:void(0)" ng-click="countyFilterForm('Student')">Students by County / District / Schools</a>
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <a href="javascript:void(0)" ng-click="exportThirdReport()">Counties / Districts / Schools</a><i class="fa fa-spinner fa-2 fa-spin" ng-show="thirdPdfLoader" aria-hidden="true"></i>
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                    <a href="javascript:void(0)" ng-click="exportFourthReport()">Assessments Completion Progress</a><i class="fa fa-spinner fa-2 fa-spin" ng-show="fourthPdfLoader" aria-hidden="true"></i>
+                                </p>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tab3" class="tab-class tab-pane fade">
+             <div class="x_panel">
+                <div class="x_title">
+                  <!--   <select name="yearDropDown" ng-model="yearDropDown">
+                        <option value="2016-2017">2016-2017</option>
+                        <option value="2017-2018">2017-2018</option>
+                    </select> --> 
+                     <ul class="nav navbar-right panel_toolbox">
+                          <li ng-show="toolsPage">
+                               <label>Year</label>
+                                <select name="toolsPageReportYear" ng-change="getLiteracyNumeracyAndSocial()" style="height: 25px;" ng-model="toolsPageReportYear">
+                             <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                          </select>  
+                            </li>
+                         <li ng-show="toolsPage">
+                                <a class="close-link export-align" href="javascript:void(0)" ng-disabled="disableToolPageExportBtn" ng-click="exportsGreenYelloRedPdf()">Export to PDF</a>
+                            </li>
+                            <li ng-show="downloadPage">
+                               <label>Year</label>
+                                <select name="dataDownloadReportYear" style="height: 25px;" ng-change="allCountiesList();getAllStudents()" ng-model="dataDownloadReportYear">
+                             <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                          </select>  
+                            </li>
+                             <li ng-show="downloadPage">
+                                <a class="close-link export-align" href="javascript:void(0)" ng-disabled="disableExportBtn" ng-click="exportDownloadPageCsv()">Export to CSV</a>
+                            </li>
+                      </ul>                     
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+
+                    <div class="" ng-hide="hideToolsLnk">
+                        <ul class="to_do">
+                            <li>
+                                <p>
+                                    <a href="javascript:void(0)" ng-click="getLiteracyNumeracyAndSocial()">Green, Yellow & Red Lights Results</a><i class="fa fa-spinner fa-2 fa-spin" ng-show="dashboardToolsLoader" aria-hidden="true"></i>
+                                </p>
+                            </li>
+                            <li>
+                                <p>
+                                   <a href="javascript:void(0)" ng-click="showDownloadTab()"> Data Download</a>
+                                </p>
+                            </li>
+
+                        </ul>
+                    </div>
+                    
+                    <div ng-show="toolsPage">
+                         <div class="table-responsive custom-table-style">
+                             <h2>Green, Yellow & Red Lights Results</h2>
+                             <hr class="margin-3" />
+                             <div class="div-border" ng-repeat="(countyIndex, countyData) in dashboardTools" ng-if="countyData.district_new.length">
+                                 <h3 class="name-capitalize">{{countyData.name}}</h3> 
+                                 <div ng-repeat="(distIndex, distData) in countyData.district_new" ng-if="countyData.district_new.length">
+                                     <h4 class="name-capitalize">{{distData.name}}</h4>
+                                     <div>
+                                <table  class="table table-striped jambo_table">
+                                  <thead>
+                                    <tr class="headings">
+                                     
+                                        <th class="column-title" style="text-align: left !important">Schools </th>
+                                      <th class="column-title"><span class="border-bottom">Literacy</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span> </th>
+                                      <th class="column-title"><span class="border-bottom">Numeracy</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span></th>
+                                      <th class="column-title"><span class="border-bottom">Soc-Phy-Emo</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span></th>
+                                      
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr class="even pointer" ng-repeat="(distIndex, schoolData) in distData.schools_new">
+                                      <td class="name-capitalize border-bottom-none" width="20%" style="text-align: left !important">{{schoolData.name}} </td>  
+                                      <td class="">
+                                      <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Red','literacy','poor',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.literacy_poor)"> 
+                                          <span class="border-bottom border-bottom-none"><font>{{schoolData.literacy_poor+'% '}}</font></span>
+                                      </a>
+
+                                      <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Yellow','literacy','good',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.literacy_good)"> 
+                                          <span class="border-bottom border-bottom-none"><font>{{schoolData.literacy_good+'% '}}</font></span>
+                                       </a>
+
+                                       <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Green','literacy','veryGood',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.literacy_very_good)"> 
+                                           <span class="border-bottom border-bottom-none"><font>{{schoolData.literacy_very_good+'%'}}</font></span>
+                                       </a>
+                                     
+
+                                      </td>
+                                      <td class=" ">
+                                      <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Red','numeracy','poor',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.numeracy_poor)">
+                                          <span class="border-bottom border-bottom-none"><font>{{schoolData.numeracy_poor+'% '}}</font></span> 
+                                       </a>
+
+                                       <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Yellow','numeracy','good',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.numeracy_good)"> 
+                                           <span class="border-bottom border-bottom-none"><font>{{schoolData.numeracy_good+'% '}}</font></span>
+                                       </a>
+
+                                       <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Green','numeracy','veryGood',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.numeracy_very_good)"> 
+                                           <span class="border-bottom border-bottom-none"><font>{{schoolData.numeracy_very_good+'%'}}</font></span>
+                                       </a>
+                                      </td>
+
+                                      <td class=" ">
+                                      <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Red','social','poor',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.social_poor)"> 
+                                          <span class="border-bottom border-bottom-none"><font>{{schoolData.social_poor+'% '}}</font></span>
+                                      </a>
+
+                                      <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Yellow','social','good',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.social_good)">
+                                          <span class="border-bottom border-bottom-none"><font>{{schoolData.social_good+'% '}}</font></span>
+                                       </a>
+
+                                       <a class="ng-binding" href="javascript:void(0)" ng-click="openEmailModalPopup('Green','social','veryGood',countyData._id,distData._id,schoolData._id,countyData.name,distData.name,schoolData.name,schoolData.social_very_good)"> 
+                                           <span class="border-bottom border-bottom-none"><font>{{schoolData.social_very_good+'%'}}</font></span>
+                                       </a>
+                                      
+                                      </td>
+                                      
+                                     </tr>
+                                     <tr ng-if="distData.districtAvg.length">
+                                         <td style="text-align: right !important;">
+                                             <b>District Average</b>
+                                         </td>
+                                         <td>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].literacyPoor+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].literacyGood+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].literacyVeryGood+'%'}}</font></span>
+                                         </td>
+                                         <td>
+                                             <span class="border-bottom border-bottom-none"><font> {{distData.districtAvg[0].numeracyPoor+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].numeracyGood+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].numeracyVeryGood+'%'}}</font></span>
+                                         </td>
+                                         <td>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].socialPoor+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].socialGood+'%'}}</font></span>
+                                             <span class="border-bottom border-bottom-none"><font>{{distData.districtAvg[0].socialVeryGood+'%'}}</font></span>
+                                         </td>
+                                     </tr>
+                                     <tr ng-show="!distData.schools_new.length">
+                                         <td colspan="4"> <div class="text-center">No Record Found.</div></td>
+                                     </tr> 
+                                 
+                                  </tbody>
+                                </table>
+                                     </div>
+                                 </div> 
+
+                                 <div ng-if="countyData.countyAvg.length">
+                                     <div><b>County Average</b></div> 
+                                     <table class="table table-striped jambo_table custon-table-heding">
+                                       <thead>
+                                            <tr>
+                                              <th></th>
+                                              <th class="column-title"><span class="border-bottom">Literacy</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span> </th>
+                                              <th class="column-title"><span class="border-bottom">Numeracy</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span></th>
+                                              <th class="column-title"><span class="border-bottom">Soc-Phy-Emo</span> <br> <span class="border-bottom"><font>Red</font>  <font>Yellow</font>  <font>Green</font></span></th>
+                                            </tr>
+                                          </thead>
+                                    <tbody>
+                                      <tr>
+                                        <td></td>
+                                        <td class="ng-binding">
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyLiteracyPoorAvgPercent+'%'}}</font></span>
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyLiteracyGoodAvgPercent+'%'}}</font></span> 
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyLiteracyVeryGoodAvgPercent+'%'}}</font></span>
+                                        </td>
+                                        <td class="ng-binding">
+                                         <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyNumeracyPoorAvgPercent+'%'}}</font></span> 
+                                             <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyNumeracyGoodAvgPercent+'%'}}</font></span> 
+                                             <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countyNumeracyVeryGoodAvgPercent+'%'}}</font></span>
+                                        </td>
+                                        <td class="ng-binding">
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countySocialPoorAvgPercent+'%'}}</font></span>
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countySocialGoodAvgPercent+'%'}}</font></span> 
+                                            <span class="border-bottom border-bottom-none"><font>{{countyData.countyAvg[0].countySocialVeryGoodAvgPercent+'%'}}</font></span>
+                                        </td>
+                                      </tr>
+                                      
+                                      
+                                    </tbody>
+                                  </table>
+ 
+                                 </div>   
+                             </div>    
+                                <div ng-show="greenYellowRedListLoader" class="text-center">
+                              <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                            </div>
+                    </div>
+                    </div>
+                    
+                    
+                    
+                    <div ng-show="downloadPage">
+                    <div class="col-md-2 col-sm-4 col-xs-12">
+                      
+                      <div class="dashboard-widget-content">
+                     <div >
+                     Counties:
+                     <div style="height: 200px;overflow: auto;">
+                        <ul class="list-unstyled timeline widget">
+                          <li>
+                             <input type="checkbox" ng-checked="true" id="countyAllChk" ng-model="allCountyChk" ng-click="countyAllCheck(allCountyChk)"> All
+                          </li>
+                          <li ng-repeat="(countyIndex,countyData) in countiesAarr" class="name-capitalize">
+                          <input type="checkbox" ng-checked="true" id="{{countyData._id}}" class="countyCls" name="checkbox{{countyIndex}}" ng-click="allDistrictsByCounty();checkAllCheckBoxChecked('county')" ng-model="countyChk[countyIndex]">
+                             {{countyData.name}}
+                          </li>
+                           
+                        </ul>
+                        </div>
+                    </div></br>
+
+                     <div ng-hide="districtsHide">
+                     Districts:
+                     <div style="height: 200px;overflow: auto;">
+                        <ul class="list-unstyled timeline widget">
+                          <li>
+                             <input type="checkbox" ng-checked="true" id="districtAllChk" ng-model="allDistrictChk" ng-click="districtAllCheck(allDistrictChk)"> All
+                          </li>
+                          <li ng-repeat="(distIndex,distData) in districtAarr" class="name-capitalize">
+                          <input type="checkbox" id="{{distData._id}}" ng-click="allSchoolesByDistrict(false);checkAllCheckBoxChecked('district')" class="districtCls" ng-checked="true" name="checkbox{{distIndex}}" ng-model="distChk[distIndex]">
+                             {{distData.name}}
+                          </li>
+                           
+                        </ul>
+                        </div>
+                    </div>
+
+                    </br>
+
+                     <div ng-hide="schoolesHide">
+                     Schools:
+                     <div style="height: 200px;overflow: auto;">
+                        <ul class="list-unstyled timeline widget">
+                          <li>
+                             <input type="checkbox" ng-checked="true" id="schoolesAllChk" ng-model="allSchoolChk" ng-click="schoolAllCheck(allSchoolChk)"> All
+                          </li>
+                          <li ng-repeat="(schoolIndex,schoolData) in schoolArr" class="name-capitalize">
+                          <input type="checkbox" id="{{schoolData._id}}" ng-click="allTeachersBySchool(false);checkAllCheckBoxChecked('school')" class="schoolCls" ng-checked="true" name="checkbox{{schoolIndex}}" ng-model="distChk[schoolIndex]">
+                             {{schoolData.name}}
+                          </li>
+                           
+                        </ul>
+                        </div>
+                    </div>
+
+                     <div ng-hide="teachersHide">
+                     Teachers:
+                     <div style="height: 200px;overflow: auto;">
+                        <ul class="list-unstyled timeline widget">
+                          <li>
+                             <input type="checkbox" ng-checked="true" id="teachersAllChk" ng-model="allTeacherChk" ng-click="teacherAllCheck(allTeacherChk)"> All
+                          </li>
+                          <li ng-repeat="(teacherIndex,teacherData) in teachersArr" class="name-capitalize">
+                          <input type="checkbox" id="{{teacherData._id}}"  class="teacherCls" ng-checked="true" name="checkbox{{teacherIndex}}" ng-click="checkAllCheckBoxChecked('teacher')" ng-model="distChk[teacherIndex]">
+                             {{teacherData.firstName+' '+teacherData.lastName}}
+                          </li>
+                           
+                        </ul>
+                        </div>
+                    </div></br>
+                    <button type="button" ng-click="filterResult();">Update Results</button>
+                    
+                  </div>
+                    </div>
+                        
+                        <!--Table start-->
+                        <div>
+                            <div class="table-responsive">
+                            
+                                <table id="studentListTable" class="table table-striped jambo_table bulk_action">
+                                  <thead>
+                                    <tr class="headings">
+                                     
+                                      <th class="column-title">First Name </th>
+                                      <th class="column-title">Last Name </th>
+                                      <th class="column-title">Created </th>
+                                      <th class="column-title">Gender </th>
+                                      <th class="column-title">DOB </th>
+                                      <th class="column-title">First Language </th>
+                                      <th class="column-title">IEP </th>
+                                      <th class="column-title">Pre-School </th>
+                                      <th class="column-title">Transitional </th>
+                                      <th class="column-title">Teacher Name </th>
+                                      </th>
+                                      
+                                    </tr>
+                                  </thead>
+
+                                  <tbody>
+                                    <tr class="even pointer" ng-repeat="(studentIndex, studentData) in studentsArr">
+                                       <td class=" ">{{studentData.firstName}}</td>
+                                      <td class=" ">{{studentData.lastName}} </td>
+                                      <td class=" ">{{studentData.created | createddate}} </td>
+                                      <td class=" ">{{studentData.gender}}</td>
+                                      <td class=" ">{{studentData.dob}}</td>
+                                      <td class=" ">{{(studentData.firstLanguage) ? studentData.firstLanguage : 'English'}}</td>
+                                      <td class=" ">{{(studentData.iep) ? studentData.iep : 'NO'}}</td>
+                                      <td class=" ">{{(studentData.preSchool) ? studentData.preSchool : 'NO'}}</td>
+                                      <td class=" ">{{(studentData.transitionalKindergarten) ? studentData.transitionalKindergarten : 'NO'}}</td>
+                                      <td class=" ">{{studentData.teacher_name}}</td>
+                                     </tr>
+                                 
+                                  </tbody>
+                                </table>
+                                <div ng-show="studentsListLoader" class="text-center">
+                              <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                            </div>
+                    </div>
+                        </div>
+                        <!--Table end-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+
+
+
+
+<div class="modal fade" id="countyFilterFormPopup" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+             <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Filtering
+                </h4>
+            </div>
+
+             <div class="modal-body">
+                <form class="form-horizontal" name="filterForm" novalidate>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Select County(ies)</label>
+                        <div class="col-sm-10">
+                            <select class="form-control select-picker" data-size="5" title="Select County"  ng-change="getDistrictByCountyId()" name="countyId" ng-model="county_id" required>
+                                 <option value="">Select County</option>
+                                 <option ng-repeat="countyData in countyList" value="{{countyData._id}}">{{countyData.name}}</option>
+                            </select>
+                            <div ng-show="filterForm.$submitted || filterForm.countyId.$touched">
+                                <span class="text-danger" ng-show="filterForm.countyId.$error.required">County is required.</span> 
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Select District(s)</label>
+                        <div class="col-sm-10">
+                            <select class="form-control select-picker" title="Select District" data-size="5" multiple="true" name="districtId"  
+                            ng-change="getSchoolesByDistId()" ng-model="district_id" >
+                                 <option ng-repeat="districtData in districtsList" value="{{districtData._id}}">{{districtData.name}}</option>
+                            </select>
+
+
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Select School(s)</label>
+                        <div class="col-sm-10">
+                            <select class="form-control select-picker" title="Select School" multiple="true" name="schoolId" data-size="5" ng-model="school_id">
+                                 <option ng-repeat="schoolData in schoolesList" value="{{schoolData._id}}">{{schoolData.name}}</option>
+                            </select>
+
+
+                        </div>
+                    </div> 
+
+
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                            <button type="submit" class="btn btn-success" ng-disabled="multiReportBtn" ng-click="saveCountyReport()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="multiReportBtn"></i></button>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>  
+
+ 
+
+
+
+
+
+
+
+<div class="modal fade ng-scope" id="emailModelPopup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">×</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Email List of Students
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                 <form class="form-horizontal ng-pristine ng-valid-email ng-invalid ng-invalid-required" name="emailSendFrm" novalidate="">
+                    <div class="form-group">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+                        <!-- ng-disabled="true" -->
+                            <input type="text" name="toFiled" ng-model="emailForm.to" class="form-control ng-pristine ng-untouched ng-empty ng-valid-email ng-invalid ng-invalid-required" placeholder="To" required="">
+                            <div ng-show="emailSendFrm.$submitted || emailSendFrm.toFiled.$touched" class="ng-hide">
+                                <span class="text-danger" ng-show="emailSendFrm.toFiled.$error.required">To is required.</span> 
+                                 <span class="text-danger ng-hide" ng-show="emailSendFrm.toFiled.$error.email">Invalid email address.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                         <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+                            <input type="text" name="ccFiled" ng-model="emailForm.cc" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-email" placeholder="Cc">
+                            <div ng-show="emailSendFrm.$submitted || emailSendFrm.ccFiled.$touched" class="ng-hide">
+                                <span class="text-danger ng-hide" ng-show="emailSendFrm.ccFiled.$error.required">Cc is required.</span> 
+                                 <span class="text-danger ng-hide" ng-show="emailSendFrm.ccFiled.$error.email">Invalid email address.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                         <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+                            <input type="text" name="bccField" class="form-control ng-pristine ng-untouched ng-valid ng-empty ng-valid-email"  placeholder="Bcc" ng-model="emailForm.bcc">
+
+                            <div ng-show="emailSendFrm.$submitted || emailSendFrm.bccField.$touched" class="ng-hide">
+                                <span class="text-danger ng-hide" ng-show="emailSendFrm.bccField.$error.required">Bcc is required.</span>
+                                <span class="text-danger ng-hide" ng-show="emailSendFrm.bccField.$error.email">Invalid email address.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                         <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+                            <input class="form-control ng-pristine ng-untouched ng-not-empty ng-valid ng-valid-required" name="subject" ng-model="emailForm.subject" placeholder="Subject" required="" type="text">
+
+                            <div ng-show="emailSendFrm.$submitted || emailSendFrm.email.$touched" class="ng-hide">
+                                <span class="text-danger ng-hide" ng-show="emailSendFrm.subject.$error.required">Subject is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                         <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+<!--                            <textarea name="content" placeholder ="Email body content…" ng-model="emailForm.content" class="form-control" required></textarea>-->
+
+                           <div>
+                               <p class="ng-binding">This is the list of students that scored {{emailForm.percentage}}% {{emailForm.color}} in the {{emailForm.assessment_type}} assessment.</p>
+                               <ul>
+                                   <li class="ng-binding">County: {{emailForm.email_county_name}}</li>
+                                   <li class="ng-binding">District: {{emailForm.email_district_name}}</li>
+                                   <li class="ng-binding">School: {{emailForm.email_school_name}}</li>
+                               </ul>
+                               <div class="custom-scroll-table">
+                              <table class="table">
+                                    <thead>
+                                      <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Teacher Email</th>
+                                        <th>Teacher</th>
+                                      </tr>
+                                    </thead>
+                                    
+                                      <tbody>
+                                        <tr ng-repeat="studentData in studentsReportData">
+                                        <td>{{studentData.student_first_name}}</td>
+                                        <td>{{studentData.student_last_name}}</td>
+                                        <td>{{studentData.teacher_email}}</td>
+                                        <td>{{studentData.teacher_name}}</td>
+                                      </tr>
+                                      <tr ng-show="!studentsReportData.length">
+                                          <td colspan="4"><div class="text-center">No Record Found.</div></td>
+                                      </tr> 
+                                    </tbody>
+                                       
+                                    
+                                  </table>
+                               </div>
+                        </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-10">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success" ng-disabled="emailSendBtn" ng-click="sendStudentsToolsReportByEmail()">Send <i class="fa fa-spinner fa-2 fa-spin ng-hide" aria-hidden="true" ng-show="emailSendBtn"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- model end -->
+

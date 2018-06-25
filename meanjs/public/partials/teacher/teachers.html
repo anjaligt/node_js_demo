@@ -1,0 +1,916 @@
+<div class="right_col" role="main">
+    <!-- top tiles -->
+    <div class="container">
+        <h2>Teachers</h2>
+        <ul class="nav nav-tabs">
+            <li class="tab-change active"><a data-toggle="tab" href="javacsript:void(0)" ng-click="changeTab('teachers');teachers()">Teachers ({{teachersCount}})</a></li>
+            <li class="tab-change">
+                <a data-toggle="tab" href="javacsript:void(0)" ng-click="changeTab('adminTeachers');adminTeachers()">Admin Teachers ({{adminTeachersCount}})
+                </a></li>
+            <li class="tab-change">
+                <a data-toggle="tab" href="javacsript:void(0)" ng-click="changeTab('teachersActivity');teachersActivity()">Teachers Activity</a></li>
+        </ul>
+
+        <div class="tab-content min-height">
+            <div id="teachers" class="tab-change tab-pane fade in active">
+                     <div class="x_panel">
+                        <div class="x_title">
+                            <!-- <h2>Teachers</h2> -->
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="addTeacher()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add Teacher</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="openActionPopup('teacher')">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Actions</a>
+                                </li>
+
+                                <li>
+                                    <a class="close-link" href="javascript:void(0)" ng-disabled="disableExportBtn" ng-click="exportTeachersReport('teacher')">Export to CSV</a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+
+
+                            <div class="table-responsive1">
+                                <table id="teachersListTables" class="table table-striped jambo_table bulk_action min-height" width="100%" cellpadding="0" cellspacing="0">
+
+                                    <thead>
+                                        <tr class="headings">
+
+                                            <th> 
+                                           <input type="checkbox" id="teacherParentChk" ng-click="checkAllCheckBox()" name="allcheck"> </th>
+                                            </th>
+                                            <th class="column-title">First Name </th>
+                                            <th class="column-title">Last Name </th>
+                                            <th class="column-title">Email </th>
+                                            <th class="column-title">County </th>
+                                            <th class="column-title">District </th>
+                                            <th class="column-title">School </th>
+                                            <th class="column-title">Created On </th>
+                                            <th class="column-title"># Students </th>
+                                            <th class="column-title">Admin Teacher </th>
+                                            <th class="column-title">App Status </th>
+                                            <th class="column-title">Edit</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                       
+                                        <tr class="even pointer" ng-repeat="(index,user) in teachersList">
+                                            <td class=""><input type="checkbox" ng-click="saveSelectedTeacherData(index,user._id,'teacher')" class="teacherListChk" data-email="{{user.email}}" id="teach_{{user._id}}" data-teacherIndex="{{index}}" value="{{user._id}}" name="selector[]"></td>
+                                            <td class=" ">{{user.firstName}}</td>
+                                            <td class=" ">{{user.lastName}}</td>
+                                            <td class=" ">{{user.email}}</td>
+                                            <td class=" ">{{user.county_name}}</td>
+                                            <td class=" ">{{user.district_name}}</td>
+                                            <td class=" ">{{user.schoolName}}</td>
+                                            <td class=" ">{{user.created | createddate}}</td>
+                                            <td class=" ">{{user.student_count}}</td>
+                                            <td class=" ">{{(user.admin_teacher_email) ? user.admin_teacher_email : '-'}}</td>
+                                            <td   ng-if="user.isLoggedIn">
+                                            <a href="javascript:void(0)" title="{{user.loggedintime}}" data-toggle="tooltip" data-placement="top" tooltip>Logged In</a>
+                                            </td>
+                                             <td class="" ng-if="!user.isLoggedIn">
+                                             <button class="btn btn-primary" href="javacsript:void(0)" ng-click="resendPasswordModal(index)">Resend Pwd</button></td>
+                                            <td class="">
+                                                <a href="javascript:void(0)" ng-click="editTeacher(index)"><i class="fa fa-edit" aria-hidden="true"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="text-center" ng-show="listLoader">
+                                                    <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+  
+            </div>
+
+            <!-- Admin Teachers tab -->
+            <div id="adminTeachers" class="tab-change tab-pane fade">
+                     <div class="x_panel">
+                        <div class="x_title">
+                            <!-- <h2>Teachers</h2> -->
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="adminAddTeacherForm()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add Admin Teacher</a>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="openActionPopup('adminTeacher')">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Actions</a>
+                                </li>
+
+                                <li>
+                                    <a  href="javascript:void(0)" ng-click="exportTeachersReport('adminTeacher')">Export to CSV</a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+
+
+                            <div class="table-responsive">
+                                <table id="adminTeachersListTable" class="table table-striped jambo_table bulk_action" width="100%" cellpadding="0" cellspacing="0">
+
+                                    <thead>
+                                        <tr class="headings">
+
+                                            <th class="column-title">
+                                                <input type="checkbox" id="adminTeacherParentChk" ng-click="checkAllAdminCheckBox()" name="adminAllcheck"> </th>
+                                            <th class="column-title">First Name </th>
+                                            <th class="column-title">Last Name </th>
+                                            <th class="column-title">Email </th>
+                                            <th class="column-title">County </th>
+                                           <!--  <th class="column-title">District </th> -->
+                                            <th class="column-title"># Students</th>
+                                            <th class="column-title">Edit</th>
+                                            <th class="column-title">Teachers</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                       
+                                        <tr class="even pointer" ng-repeat="(adminIndex,adminTeacher) in adminTeachersList">
+                                            <td class="">
+                                                <input type="checkbox" ng-click="saveSelectedTeacherData(adminIndex,adminTeacher._id,'adminTeacher')" class="adminTeacherChk" id="teach_{{adminTeacher._id}}" data-email="{{adminTeacher.email}}" value="{{adminTeacher._id}}" name="selector[]"></td>
+                                            <td class=" ">{{adminTeacher.firstName}}</td>
+                                            <td class=" ">{{adminTeacher.lastName}}</td>
+                                            <td class=" ">{{adminTeacher.email}}</td>
+                                            <td class=" ">{{adminTeacher.county_name}}</td>
+                                           <!--  <td class=" ">{{adminTeacher.district_name}}</td> -->
+                                             <td class=" ">{{adminTeacher.student_count}}</td>
+                                            <td class="">
+                                                <a href="javascript:void(0)" ng-click="editAdminTeacher(adminIndex)"><i class="fa fa-edit" aria-hidden="true"></i></a>
+                                            </td>
+                                            <td class=" ">
+                                                <a href="javascript:void(0)" ng-click="getAssociatedTeachers(adminTeacher._id)">
+                                                    <i class="fa fa-group" aria-hidden="true"></i>
+                                                     ({{adminTeacher.teachers_count}})
+                                                </a>
+
+                                            </td>
+                                        </tr>
+
+
+                                    </tbody>
+                                </table>
+                                <div class="text-center" ng-show="adminListLoader">
+                                                    <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+               
+
+                <!-- model start -->
+                <div class="modal fade" id="adminSubTeachers" tabindex="-1" role="dialog" 
+                     aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <button type="button" class="close" 
+                                        data-dismiss="modal">
+                                    <span aria-hidden="true">&times;</span>
+                                    <span class="sr-only">Close</span>
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    {{teachers_first_name + ' ' + teachers_last_name +"'s"}} Teachers
+                                </h4>
+                            </div>
+
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                            <div class="custome-tbl-height">
+                                <table class="table" >
+                                    <thead>
+                                        <tr>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>County</th>
+                                            <th>District</th>
+                                            <th>School</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="associatedTeacher in associatedTeachersList">
+                                            <td>{{associatedTeacher.firstName}}</td>
+                                            <td>{{associatedTeacher.lastName}}</td>
+                                            <td>{{associatedTeacher.email}}</td>
+                                            <td>{{associatedTeacher.county_name}}</td>
+                                            <td>{{associatedTeacher.district_name}}</td>
+                                            <td>{{associatedTeacher.school_name}}</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                </div>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="teachersActivity" class="tab-change tab-pane fade">
+                     <div class="x_panel">
+                        <div class="x_title">
+                            <!-- <h2>Teachers</h2> -->
+                            <ul class="nav navbar-right panel_toolbox">
+                                <li>
+                                    <!-- <a href="javascript:void(0)" ng-click="adminAddTeacherForm()">
+                                        <i class="fa fa-plus" aria-hidden="true"></i> Add Teacher</a> -->
+                                        <label>Year</label>
+                                        <select ng-change="teachersActivity()" style="height: 25px;" ng-model="activityFilterDate">
+                                            <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                                        </select>
+                                </li>
+
+                                <li>
+                                    <a href="javascript:void(0)" class="export-align" ng-click="actionGlobalUser='activity';openTeacherEmailPopup()">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Send Mail</a>
+                                </li>
+
+                                <li>
+                                    <a  href="javascript:void(0)" class="export-align" ng-click="exportTeachersReport('teacherActivity')">Export to CSV</a>
+                                </li>
+                            </ul>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="x_content">
+
+
+                            <div class="table-responsive">
+                                <table id="teachersActListTable" class="table table-striped jambo_table bulk_action" width="100%" cellpadding="0" cellspacing="0">
+
+                                    <thead>
+                                        <tr class="headings">
+
+                                            <th data-orderable="false">
+                                                <input type="checkbox" id="ActivityTeacherChk" ng-click="allActivityCheckBox()" name="activityAllcheck"> </th>
+                                            <th class="column-title">Teachers </th>
+                                            <th class="column-title">Created On </th>
+                                            <th class="column-title">County </th>
+                                            <th class="column-title">District </th>
+                                            <th class="column-title">School </th>
+                                            <th class="column-title "># Students</th>
+                                            <th class="column-title ">Literacy Completed</th>
+                                            <th class="column-title ">Numeracy Completed</th>
+                                            <th class="column-title ">Soc/Emo/Phy Completed</th>
+
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                      
+                                        <tr class="even pointer" ng-repeat="(activityIndex,teachersList) in teachersActivityList">
+                                            <td class="">
+                                                <input type="checkbox" class="activityChk" 
+                                                ng-click="saveSelectedTeacherData(activityIndex,teachersList._id,'teacherActivity')" data-email="{{teachersList.email}}" id="teachAct_{{teachersList._id}}" value="{{teachersList._id}}" name="selector[]"></td>
+                                            <td class=" ">{{teachersList.firstName}} {{teachersList.lastName}}</td>
+                                            <td class=" ">{{teachersList.createdIso | createddate}}</td>
+                                            <td class=" ">{{teachersList.county_name}}</td>
+                                            <td class=" ">{{teachersList.district_name}}</td>
+                                            <td class=" ">{{teachersList.schoolName}}</td>
+                                            <td class=" ">{{teachersList.student_count}}</td>
+                                            <td class=" ">{{teachersList.literacy_count}}</td>
+                                            <td class=" ">{{teachersList.numeracy_count}}</td>
+                                            <td class=" ">{{teachersList.social_count}}</td>
+                                            
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                 <div class="text-center" ng-show="teacherActivityLoader">
+                                                    <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+                                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 
+                <!-- model start -->     
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- model start -->
+<div class="modal fade bs-example-modal-sm" id="actionModalPopup" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Actions
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+            <ul class="li-style-cls">
+                <li>
+                    <i class="fa fa-envelope" aria-hidden="true"></i>  
+                    <a href="javascript:void(0)" ng-click="openTeacherEmailPopup()">Email Teacher </a>
+                </li> 
+                <li>
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>  
+                    <a href="javascript:void(0)" ng-click="deleteTeacherPopup()">Remove Teacher </a>
+                </li> 
+            </ul>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- model start -->
+<div class="modal fade" id="teacherEmailModel" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Email Teacher(s)
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <p>Teacher’s Information</p>
+                <form class="form-horizontal" name="teacherEmail" novalidate>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                        <!-- ng-disabled="true" -->
+                            <input type="text" name="toFiled" ng-model="teacherEmailForm.to"  class="form-control" placeholder="To" ng-disabled="true" required />
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.toFiled.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.toFiled.$error.required">To is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" name="ccFiled" ng-model="teacherEmailForm.cc" class="form-control" placeholder="Cc" />
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.ccFiled.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.ccFiled.$error.required">Cc is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   name="bccField" placeholder="Bcc" ng-model="teacherEmailForm.bcc" />
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.bccField.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.bccField.$error.required">Bcc is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="subject" ng-model="teacherEmailForm.subject" placeholder="Subject" required />
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.email.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.subject.$error.required">Subject is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <div class="col-sm-10">
+                            <textarea name="content" placeholder ="Email body content…" ng-model="teacherEmailForm.message" class="form-control" required></textarea>
+
+                            <div ng-show="teacherEmail.$submitted || teacherEmail.content.$touched">
+                                <span class="text-danger" ng-show="teacherEmail.content.$error.required">Email body content is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-10">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-success" ng-disabled="teacherEmailBtn" ng-click="sendMail()">Send <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="teacherEmailBtn"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- model end -->
+
+
+<!-- model start -->
+<div class="modal fade" id="addTeacherForm" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    {{modalFormTitle}}
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <p>Teacher’s Information</p>
+                <form class="form-horizontal" name="teacherFrm" novalidate>
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label" for="inputEmail3">First Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="firstName" ng-model="teacherForm.firstName" class="form-control" placeholder="First Name" required />
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.firstName.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.firstName.$error.required">First name is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Last Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   name="lastName" placeholder="Last Name" ng-model="teacherForm.lastName" required />
+
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.lastName.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.lastName.$error.required">Last name is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Email Address</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control"
+                                   name="email" ng-model="teacherForm.email" placeholder="Email Address" required />
+
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.email.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.email.$error.required">Email is required.</span>
+                                <span class="text-danger" ng-show="teacherFrm.email.$error.email">Invalid email address.</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                   <!--  <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >School</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="school" ng-model="teacherForm.e3" required>
+                                <option value=""> Select School</option>
+                                <option ng-repeat="schoole in schooles" value="{{schoole._id}}" ng-if="schoole.name"> {{schoole.name}}</option>
+                            </select>
+
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.school.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.school.$error.required">School is required.</span>
+                            </div>
+                        </div>
+                    </div> -->
+
+
+
+                  <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >County</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-change="selectCounty('teacher')" name="teacherCounty" ng-model="teacherForm.e1" required>
+                                <option value=""> Select County</option>
+                                <option ng-repeat="countyData in counties" value="{{countyData._id}}">{{countyData.name}}</option>
+                            </select>
+
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.teacherCounty.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.teacherCounty.$error.required">County is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                  
+                      <div class="form-group">
+                         <label class="col-sm-2 control-label"
+                                for="inputPassword3" >District</label>
+                         <div class="col-sm-10">
+                             <select class="form-control" name="teacherDistrict"  ng-change="selectDistricts('teacher')" ng-model="teacherForm.e2" required>
+                                 <option value=""> Select District</option>
+                                 <option ng-repeat="districtData in contyDistricts" value="{{districtData._id}}">{{districtData.name}}</option>
+                             </select>
+
+                             <div ng-show="teacherFrm.$submitted || teacherFrm.teacherDistrict.$touched">
+                                 <span class="text-danger" ng-show="teacherFrm.teacherDistrict.$error.required">District is required.</span>
+                             </div>
+                         </div>
+                     </div> 
+
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >School</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="teacherSchool" ng-model="teacherForm.e3" required>
+                                <option value=""> Select School</option>
+                                <option ng-repeat="schoolData in districtSchooles" value="{{schoolData._id}}">{{schoolData.name}}</option>
+                            </select>
+
+                            <div ng-show="teacherFrm.$submitted || teacherFrm.teacherSchool.$touched">
+                                <span class="text-danger" ng-show="teacherFrm.teacherSchool.$error.required">School is required.</span>
+                            </div>
+                        </div>
+                    </div> 
+
+                    <div class="form-group" ng-show="assinToAdmin">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Admin Teacher</label>
+                        <div class="col-sm-10">
+                            <input type="checkbox" class="" name="isAdminTeachers" id="isAdminTeacher"  ng-model="teacherForm.admin_teachers" />
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                            <button type="submit" ng-show="addTeacherBtn" class="btn btn-success" ng-disabled="btnDisable" ng-click="saveTeacher()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="btnLoader"></i></button>
+
+                            <button type="submit" ng-show="updateTeacherBtn" class="btn btn-success" ng-disabled="btnDisable" ng-click="submitTeacherUpdateForm()">Update <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="btnLoader"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">
+                            Close
+                </button>
+                <button type="button" class="btn btn-primary">
+                    Save changes
+                </button>
+            </div> -->
+        </div>
+    </div>
+</div>
+<!-- model end -->
+
+
+
+<!-- model start -->
+<div class="modal fade" id="adminSubTeachers" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    {{teachers_first_name + ' ' + teachers_last_name}} Teachers
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>County</th>
+                            <th>School</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="associatedTeacher in associatedTeachersList">
+                            <td>{{associatedTeacher.firstName}}</td>
+                            <td>{{associatedTeacher.lastName}}</td>
+                            <td>{{associatedTeacher.email}}</td>
+                            <td>{{associatedTeacher.county_name}}</td>
+                            <td>{{associatedTeacher.district_name}}</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- model end -->
+
+
+
+<!-- model start -->
+<div class="modal fade" id="addAdminTeacherForm" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Add a New Teacher
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <p>Teacher’s Information</p>
+                <form class="form-horizontal" name="adminTeacherFrm" novalidate>
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label" for="inputEmail3">First Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="adminFirstName" ng-model="adminTeacherForm.firstName" class="form-control" placeholder="First Name" required />
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminFirstName.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminFirstName.$error.required">First name is required.</span> 
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Last Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   name="adminLastName" placeholder="Last Name" ng-model="adminTeacherForm.lastName" required />
+
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminLastName.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminLastName.$error.required">Last name is required.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Email Address</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control"
+                                   name="adminEmail" ng-model="adminTeacherForm.email" placeholder="Email Address" required />
+
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminEmail.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminEmail.$error.required">Email is required.</span>
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminEmail.$error.email">Invalid email address.</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >County</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" ng-change="selectCounty('adminTeacher')" name="adminCounty" ng-model="adminTeacherForm.e1" required>
+                                <option value=""> Select County</option>
+                                <option ng-repeat="countyData in counties" value="{{countyData._id}}">{{countyData.name}}</option>
+                            </select>
+
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminCounty.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminCounty.$error.required">County is required.</span>
+                            </div>
+                        </div>
+                    </div>
+                  
+                      <div class="form-group">
+                         <label class="col-sm-2 control-label"
+                                for="inputPassword3" >District</label>
+                         <div class="col-sm-10">
+                             <select class="form-control" name="adminDistrict"  ng-change="selectDistricts('adminTeacher')" ng-model="adminTeacherForm.e2" required>
+                                 <option value=""> Select District</option>
+                                 <option ng-repeat="districtData in contyDistricts" value="{{districtData._id}}">{{districtData.name}}</option>
+                             </select>
+
+                             <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminDistrict.$touched">
+                                 <span class="text-danger" ng-show="adminTeacherFrm.adminDistrict.$error.required">District is required.</span>
+                             </div>
+                         </div>
+                     </div> 
+
+                      <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >School</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="adminSchool" ng-model="adminTeacherForm.e3" required>
+                                <option value=""> Select School</option>
+                                <option ng-repeat="schoolData in districtSchooles" value="{{schoolData._id}}">{{schoolData.name}}</option>
+                            </select>
+
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminSchool.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminSchool.$error.required">School is required.</span>
+                            </div>
+                        </div>
+                    </div> 
+
+                   <!--  <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >School</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="adminSchool" ng-model="adminTeacherForm.e3" required>
+                                <option value=""> Select School</option>
+                                <option ng-repeat="schoole in schooles" value="{{schoole._id}}" ng-if="schoole.name"> {{schoole.name}}</option>
+                            </select>
+
+                            <div ng-show="adminTeacherFrm.$submitted || adminTeacherFrm.adminSchool.$touched">
+                                <span class="text-danger" ng-show="adminTeacherFrm.adminSchool.$error.required">School is required.</span>
+                            </div>
+                        </div>
+                    </div> -->
+<!-- 
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="inputPassword3" >Admin Teacher</label>
+                        <div class="col-sm-10">
+                            <input type="checkbox" class="" name="adminTeachers" id="isAdminTeacher"  ng-model="adminTeacherForm.admin_teachers" />
+                        </div>
+                    </div>
+ -->
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                            <button type="submit" ng-show="adminAddTeacherBtn" class="btn btn-success" ng-disabled="btnDisable" ng-click="saveAdminTeacher()">Save <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="btnLoader"></i></button>
+
+                            <button type="submit" ng-show="adminUpdateTeacherBtn" class="btn btn-success" ng-disabled="btnDisable" ng-click="submitAdminTeacherUpdateForm()">Update <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="btnLoader"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">
+                            Close
+                </button>
+                <button type="button" class="btn btn-primary">
+                    Save changes
+                </button>
+            </div> -->
+        </div>
+    </div>
+</div>
+<!-- model end --> 
+
+
+<!-- model start popup for delete teachers -->
+<div class="modal fade" id="deleteTeachersMsgModal" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Delete Teacher(s)
+                </h4>
+            </div>
+   
+   
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <h4>{{confirmMessage}}</h4> 
+                <p ng-show="showAdminDeleteMsg"><span class="required">*</span> Any teachers assigned to the admin teacher(s) deleted will be automatically disassociated.</p> 
+                <form class="form-horizontal"> 
+                 <div class="form-group pull-right">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                             <button type="button" class="btn btn-success" ng-click="deleteTeacher()">Delete  </button>
+                   </div>
+                    
+               </div>
+               </form>
+            </div>
+ 
+        </div>
+    </div>
+</div>
+<!-- model end popup for delete teachers -->
+
+
+<!-- model start popup for resend password -->
+<div class="modal fade" id="resendPasswordModal" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Resend Password
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <h4>Are you sure you want to re-send the email to download the app?</h4> 
+                  <form class="form-horizontal"> 
+                 <div class="form-group pull-right">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                             <button type="button" class="btn btn-success" ng-disabled="resendPasswordBtn" ng-click="resendPassword()">Re-Send  <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="resendPasswordBtn"></i></button>
+                   </div>
+                    
+               </div>
+               </form>
+            </div>
+ 
+        </div>
+    </div>
+</div>
+<!-- model end popup for resend password -->
+
+
+
+
+<!-- model start popup for update teacher-->
+<div class="modal fade" id="updateTeacherConfirmModal" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Update Teacher</h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <h4>Are you sure you want to proceed with this change?</h4>                 
+                <form class="form-horizontal"> 
+                 <div class="form-group pull-right">
+                        <div class="col-sm-12">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel  </button>
+                            <button type="button" ng-show="adminTeacherUpdateConfirmBtn" ng-click="updateAdminTeacher()" class="btn btn-success" ng-click="">Update  </button>
+                            <button type="button" ng-show="teacherUpdateConfirmBtn" ng-click="updateTeacher()" class="btn btn-success" ng-click="">Update  </button>
+                        </div>
+                 </div>
+               </form>
+            </div>
+ 
+        </div>
+    </div>
+</div>
+<!-- model end popup for update teacher-->
+
+
+ 
+
+ 

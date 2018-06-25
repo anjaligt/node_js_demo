@@ -1,0 +1,71 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+    h2 Download Reports
+    .alert.alert-info(role="alert", style="display:none")
+    .well
+      .form-horizontal(role="form")
+        .form-group
+          label(for="e1", class="col-sm-2 control-label") Select County
+          .col-sm-5
+            select(id="e1")
+              option
+              each district in data
+                option(value= district._id, name="districts") #{district.name}
+        .form-group
+          label(for="e2", class="col-sm-2 control-label") Select District
+          .col-sm-5
+            select(id="e2")
+              option
+        .form-group
+          label(for="e3", class="col-sm-2 control-label") Select School
+          .col-sm-5
+            select(id="e3")
+              option
+
+        .form-group
+          label(for="e4", class="col-sm-2 control-label") Select Teacher
+          .col-sm-5
+            select(id="e4")
+              option
+        hr
+
+      .btn-cont.btn-wid
+        h5
+          strong Download Reports with answers
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="/districts/all", role="button", id='btn-all') All Counties
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-county') Download County Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-dist') Download Districts Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-schools') Download Schools Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-teachers') Download Teachers Report
+
+      .btn-cont.btn-wid
+        h5
+          strong Download Reports without answers
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="/format/districts/all", role="button", id='btn-all') All Counties
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-county-woq') Download County Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-dist-woq') Download Districts Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-schools-woq') Download Schools Report
+        br
+        .btn-group.margin-bottom-10
+          a.btn.btn-primary(href="#", role="button", disabled="disabled", id='btn-teachers-woq') Download Teachers Report
+  include footer

@@ -1,0 +1,27 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Sample Example Upload and store image Using Nodejs and MySQL</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+       <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+       <script src="/chat.js"></script>
+       <script src="/socket.io/socket.io.js"></script>
+       <script type="text/javascript">
+        io.sockets.on('connection', function (socket) {
+            socket.emit('message', { message: 'welcome to the chat' });
+            socket.on('send', function (data) {
+                io.sockets.emit('message', data);
+            });
+        });
+       </script>
+        
+    </head>
+    <body>
+    <div id="content" style="width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;"></div>
+        <input type="text" id="name" style='width:350px;'>
+        <input type="text" id="field" style='width:350px;'>
+        <input type="button" id="send" value="send">
+    
+    </body>
+</html>
+ 

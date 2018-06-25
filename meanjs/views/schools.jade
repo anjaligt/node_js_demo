@@ -1,0 +1,137 @@
+extends layout
+
+block content
+  include nav
+  div.container.main(role="main")
+    h2 Manage Schools
+    .searchForm
+        form(id='userForm', method='get', action='/schools')
+          .row
+            .col-sm-2
+              a(href='#addSchoolModal',data-toggle='modal',id='add_school_btn').btn.btn-default Add School
+            .col-sm-9
+              input(type='search', placeholder='Search by school name', id='userPlaceholder', name='q', value='#{searchQuery}').form-control.search-bar
+            .col-sm-1
+              button(type='submit', id='recipeSubmit').btn.btn-default Search
+
+    a(href='#editSchoolModal',data-toggle='modal',id='edit_school_btn').btn.btn-default.hide Edit School
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    if !data[0]
+      br
+      .alert.alert-info.top-buffer
+        h5 No Schools Found
+
+    if data[0]
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th.col-md-3 County
+            th.col-md-3 District
+            th.col-md-3 Name
+            th.col-md-3 Actions
+        tbody
+          each school in data
+            tr
+              td=school.countyName
+              td=school.districtName
+              td=school.name
+              td
+                a(style='cursor:pointer',data-id='#{school._id}', data-name='#{school.name}', data-districtId='#{school.distId}', data-countyId='#{school.countyId}' class='school-popover-edit')
+                  img(src="/image/edit-icon.png")
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                if school.noOfTeachers <= 0
+                  span.trash
+                    a(style='cursor:pointer', class='school-popover-delete', data-toggle='popover', tabindex='0', data-id='#{school._id}', data-placement='left')
+                      img(src="/image/delete-icon.png")
+
+
+
+  include footer
+
+    .school-popover-delete-content.hide
+      p Are you sure you want to delete this school?
+      hr
+      .recipes-popover-links
+        form(role='form', method='POST', action='/recipes/?_method=DELETE', name='deleteForm')
+
+          a.btn.btn-default(href='#').school-cancel.margin-right-5 Cancel
+          a.btn.btn-primary(href='#').school-deleteLink Delete
+
+    // Add School Modal
+    .modal.fade#addSchoolModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Add School
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+              .row
+                .alert2.alert-danger.school-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/schools/add', method='post', enctype='multipart/form-data', id='addSchoolForm')
+              .row
+                .form-group
+                    label(for="e1", class="col-sm-3 control-label").schools-mandatory Select County
+                    .col-sm-9
+                      select(id="e1", name="e1")
+                        option
+                        each district in counties
+                          option(value= district._id, name="districts") #{district.name}
+
+              .row
+                .form-group
+                    label(for="e2", class="col-sm-3 control-label").schools-mandatory Select District
+                    .col-sm-9
+                      select(id="e2", name="e2")
+                        option
+
+              .row
+                .form-group
+                    label(for="e3", class="col-sm-3 control-label").schools-mandatory School Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='100 characters max', name='schoolName', id='schoolName', maxlength='100')
+
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.addSchoolFormBtn.margin-right-10.pull-right Add
+
+    // Edit School Modal
+    .modal.fade#editSchoolModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Edit School
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.school-alert-edit(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/schools/edit', method='post', enctype='multipart/form-data', id='editSchoolForm')
+              .row
+                .form-group
+                    label(for="e3", class="col-sm-3 control-label").schools-mandatory School Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='100 characters max', name='editSchoolName', id='editSchoolName', maxlength='100')
+                      input(type='hidden', name='editSchoolId', id='editSchoolId')
+
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.editSchoolFormBtn.margin-right-10.pull-right Update

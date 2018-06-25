@@ -1,0 +1,164 @@
+extends layout
+
+block content
+  include nav
+
+  div.container.main(role="main")
+
+    if messages.info
+      br
+      .alert.alert-info(role='alert').userAlert
+        p #{messages.info}
+
+    if messages.error
+      br
+      .alert.alert-danger(role='alert').userAlert
+        p #{messages.error}
+
+    h2.aaaaa
+          .row.left_panel
+            .col-sm-6
+              a(href='#', id='schools_btn').btn.btn-default Schools (#{schools_count})
+            .col-sm-4
+              a(href='#',id='app_setting_btn').btn.btn-default App Settings
+
+          .row.right_panel
+            .col-sm-4
+              a(href='#addSchoolModal',data-toggle='modal', id='add_school_btn').btn.btn-default +Add New School 
+  
+
+  div.search_result
+    if data[0]
+      table.table.table-striped.table-responsive
+        thead
+          tr
+            th.col-md-2 School Name
+            th.col-md-6 Action
+          tbody  
+        each schools in data
+          tr
+            td=schools.name
+            td
+                a(style='cursor:pointer',data-id='#{schools._id}',data-name='#{schools.name}',data-dist_id='#{schools.distId}').edit_single_school Edit | 
+                a(style='cursor:pointer',data-id='#{schools._id}',data-name='#{schools.name}').delete_single_school Delete
+
+    else
+     p= "No Schools Found"
+
+   
+
+    // Add School Model
+    .modal.fade#addSchoolModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Edit District
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/schools/addnew', method='post', id='add_school_form')
+
+              .row
+                .form-group
+                    label(for="district_id", class="col-sm-3 control-label").schools-mandatory District
+                    .col-sm-9
+                      select(id="e2", name="e2",required="required").form-control
+                        option(value="",) Select District
+                        each district in data1
+                          option(value= district._id) #{district.name}
+
+              .row
+                .form-group
+                    label(for="schoolname", class="col-sm-3 control-label").schools-mandatory School Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='schoolName', id='add_school_name', maxlength='50',required='required', autocomplete='off')
+                      input.form-control(type='hidden', id='add_school_id', name='add_school_id')
+                      input.form-control(type='hidden', id='add_school_check')
+              .row
+                .col-sm-9.addSchoolsDiv
+
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.addSchoolbtn.margin-right-10.pull-right Add
+
+
+  
+       // Edit Teacher Modal
+    .modal.fade#editSchoolModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Edit School
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/schools/edit', method='post', enctype='multipart/form-data', id='edit_school_form')
+              .row
+                .form-group
+                    label(for="schoolname", class="col-sm-3 control-label").schools-mandatory School Name
+                    .col-sm-9
+                      input.form-control(type='text', placeholder='50 characters max', name='editSchoolName', id='edit_school_name', maxlength='50',required='required', autocomplete='off')
+                      input.form-control(type='hidden', id='edit_school_id', name='editSchoolId')
+                      input.form-control(type='hidden', id='edit_school_check')
+              .row
+                .col-sm-9#SchDiv
+
+              hr
+              .row
+                .col-sm-12
+                  button(type='submit').btn.btn-primary.editSchoolbtn.margin-right-10.pull-right Add
+
+
+
+    // Confirm Delete Model
+
+    .modal.fade#deleteSchoolModal
+      .modal-dialog
+        .modal-content
+          .modal-header
+            h4.modal-title
+              .row
+                .col-md-12.add-school Confirm Removal
+                  button(type='button', data-dismiss='modal', aria-hidden='true').close ×
+
+              .row
+                .alert2.alert-danger.teacher-alert(role='alert').hide
+                  p.text-center Please fill the mandatory fields
+
+          .modal-body
+            form(role='form', action='/schools/delete', method='post', enctype='multipart/form-data', id='edit_school_form')
+              .row
+                .form-group
+                    .col-sm-9 Please type "YES" into the field below to confirm the removal:
+              .row
+                .form-group
+                    .col-sm-9
+                      input.form-control(type='text', name='confirm_delete', id='confirm_delete',required='required', autocomplete='off')
+                      input.form-control(type='hidden', id='delete_school_id', name='deleteSchoolId')
+
+              hr
+              .row
+                .col-sm-12
+                  button(type="button", data-dismiss="modal").btn.btn-default Close
+                  button(type='submit').btn.btn-primary.deleteSchoolbtn.margin-right-10.pull-right Confirm
+
+
+
+
+
+  include footer
+
+

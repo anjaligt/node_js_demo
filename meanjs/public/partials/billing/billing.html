@@ -1,0 +1,199 @@
+<div class="right_col" role="main">
+  <div class="x_panel">
+      <div class="x_title" ng-hide="billingListLoader" ng-if="countiesList.length">
+           <ul class="nav navbar-left panel_toolbox">
+             <li><h2>Billing</h2></li>
+          </ul>
+          <ul class="nav navbar-right panel_toolbox">
+             <li> Year
+                   <select ng-model="reportYear" ng-change="getAllCounties(reportYear)">
+                      <option ng-repeat="yearData in filterYears" value="{{yearData}}">{{yearData}}</option>
+                   </select>
+             </li>
+             <li>
+                <a class="close-link" href="javascript:void(0)" ng-disabled="disableExportBtn" ng-click="exportBillingCsv('teacher')">Export to CSV</a>
+             </li>
+             
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+
+        <div class="x_content">
+          <div class="text-center" ng-show="billingListLoader">
+                <i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i>
+           </div>
+            <div class="panel-group" ng-repeat="(billingIndex,billingData) in countiesList" id="accordion"  role="tablist" aria-multiselectable="true">
+              <div class="panel panel-default">
+                <div class="panel-heading ul-color" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" ng-click="accordianTab(billingIndex)" id="accordian_{{billingIndex}}" class="accordianCls" data-parent="accordion" href="collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fa fa-plus" id="plus_{{billingIndex}}" aria-hidden="true"></i>
+                    <i class="fa fa-minus display-none-cls" id="minus_{{billingIndex}}" aria-hidden="true"></i>
+
+                    </a>
+                    {{billingData.county_name.substr(0,1).toUpperCase()+billingData.county_name.substr(1)}}
+                     <span>(County Total: ${{(billingAmount[billingIndex]) ? billingAmount[billingIndex] : 0}})</span>
+
+                       <div class="pull-right">Amount:  <input type="text" name="countyAmount[billingIndex]" ng-model="countyAmount[billingIndex]" ng-init="countyAmount[billingIndex]=billingData.county_amount" ng-keyup="updateCountyAmount(billingData.county_id,countyAmount[billingIndex],'amount',billingIndex)"
+                        ng-disabled="(reportYear==currentAssessmentYear) ? false : true"></div>
+                  </h4>
+                </div>
+                <div  class="panel-collapse collapse" id="accordianTab_{{billingIndex}}" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body">
+                     <table class="table table-striped jambo_table bulk_action">
+                        <thead>
+                          <tr class="headings">
+                            
+                            <th class="column-title">
+                             <a href="javascript:void(0)" ng-click="collapsTable(billingIndex)">
+                               <i class="fa fa-minus icon-color" id="county_tab_toggle_{{billingIndex}}" aria-hidden="true"></i>
+                             </a>
+                            County </th>
+                            <th class="column-title">District </th>
+                            <th class="column-title">School </th>
+                            <th class="column-title"># of Teachers </th>
+                            <th class="column-title">Billed </th>
+                            <th class="column-title">Paid </th>
+                            <th class="column-title">Amount </th>
+                            <th class="column-title no-link last"><span class="nobr">Note</span>
+                            </th>
+                            
+                          </tr>
+                        </thead>
+
+                        <tbody id="county_table_{{billingIndex}}">
+                         
+                          <tr class="even pointer" ng-repeat="(schoolIndex,schoolData) in billingData.schooles">
+                            <td ng-if="schoolData.distTr">
+                              {{billingData.county_name.substr(0,1).toUpperCase()+billingData.county_name.substr(1)}}
+                            </td>
+                            <td ng-if="schoolData.distTr">
+                            {{schoolData.districtName.substr(0,1).toUpperCase()+schoolData.districtName.substr(1)}} (District Amount)
+                            </td>
+                            <td ng-if="schoolData.distTr"></td>
+                            <td ng-if="schoolData.distTr"></td>
+                            <td ng-if="schoolData.distTr">
+                              <input type="checkbox" ng-model="isDistBilled[billingIndex][schoolIndex]" 
+                              ng-click="updateDistrictStatus(billingIndex,schoolIndex,schoolData.distId,'billed',isDistBilled[billingIndex][schoolIndex])" 
+                              ng-init="isDistBilled[billingIndex][schoolIndex]=((schoolData.isBilled) ? true : false)"
+                              name="isDistBilled[billingData._id]">
+                            </td>
+                            <td ng-if="schoolData.distTr">
+                               <input type="checkbox" ng-model="isDistPayed[billingIndex][schoolIndex]" 
+                               ng-click="updateDistrictStatus(billingIndex,schoolIndex,schoolData.distId, 'payed',isDistPayed[billingIndex][schoolIndex])"
+                                ng-init="isDistPayed[billingIndex][schoolIndex]=((schoolData.isPayed) ? true : false)"
+                                name="isDistPayed[billingData._id]"> 
+                            </td>
+                            <td ng-if="schoolData.distTr">
+                               <input type="text" name="districtAmount[billingIndex][schoolIndex]" ng-model="districtAmount[billingIndex][schoolIndex]" ng-init="districtAmount[billingIndex][schoolIndex]=schoolData.amount" ng-keyup="updateDistrictAmount(billingIndex,schoolIndex,schoolData.distId,'amount',districtAmount[billingIndex][schoolIndex])" ng-disabled="(reportYear==currentAssessmentYear) ? false : true">
+                            </td>
+
+                            <td ng-if="schoolData.distTr">
+                              <a href="javascript:void(0)" ng-click="editDistrictBillingNote(billingIndex,schoolIndex, schoolData.distId, 'note','')">
+                              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                </a>
+                                <span ng-show="showGreen[schoolData.distId]" 
+                                ng-init="showGreen[schoolData.distId]=((schoolData.note) ? true : false)"  class="btn btn-success btn-circle-green btn-lg"></span>
+                                <span ng-show="showBrown[schoolData.distId]" 
+                                ng-init="showBrown[schoolData.distId]=((schoolData.note) ? false : true)"  class="btn btn-default btn-circle-brown btn-lg"></span>
+                            </td>
+
+                            <td ng-if="!schoolData.distTr">{{billingData.county_name.substr(0,1).toUpperCase()+billingData.county_name.substr(1)}}</td>
+                            <td ng-if="!schoolData.distTr">{{schoolData.districtName.substr(0,1).toUpperCase()+schoolData.districtName.substr(1)}}</td>
+                            <td ng-if="!schoolData.distTr">{{schoolData.name.substr(0,1).toUpperCase()+schoolData.name.substr(1);}}</td>
+                            <td ng-if="!schoolData.distTr">{{schoolData.noOfTeachers}}</td>
+
+                            <td ng-if="!schoolData.distTr">
+                              <input type="checkbox" ng-model="isBilled[billingIndex][schoolIndex]" 
+                              ng-click="changeBillingStatus(billingIndex,schoolIndex, schoolData._id, 'billed',isBilled[billingIndex][schoolIndex])" 
+                              ng-init="isBilled[billingIndex][schoolIndex]= ((schoolData.isBilled) ? true : false)"  name="isBilled[billingData._id]">
+                            </td>
+                             <td ng-if="!schoolData.distTr">
+                              <input type="checkbox" ng-model="isPayed[billingIndex][schoolIndex]" 
+                               ng-click="changeBillingStatus(billingIndex,schoolIndex, schoolData._id, 'payed',isPayed[billingIndex][schoolIndex])"
+                               ng-init="isPayed[billingIndex][schoolIndex]= ((schoolData.isPayed) ? true : false)" name="isPayed[billingData._id]">
+                            </td>
+                            <td ng-if="!schoolData.distTr">
+                              <input type="text" valid-number ng-model="amount[billingIndex][schoolIndex]" name="" ng-keyup="updateSchoolAmount(billingIndex,schoolIndex, schoolData._id, 'amount',amount[billingIndex][schoolIndex])"
+                                ng-init="amount[billingIndex][schoolIndex]= schoolData.amount" ng-disabled="(reportYear==currentAssessmentYear) ? false : true"> 
+                            </td>
+                            <td ng-if="!schoolData.distTr">
+                            <a href="javascript:void(0)" ng-click="editBillingNote(billingIndex,schoolIndex, schoolData._id, 'note','')">
+                              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                            </a>
+                            <span ng-show="showGreen[schoolData._id]" 
+                            ng-init="showGreen[schoolData._id]=((schoolData.note) ? true : false)"  class="btn btn-success btn-circle-green btn-lg"></span>
+                            <span ng-show="showBrown[schoolData._id]" 
+                            ng-init="showBrown[schoolData._id]=((schoolData.note) ? false : true)"  class="btn btn-default btn-circle-brown btn-lg"></span>
+                            </td>
+                          </tr>
+                          <tr ng-show="(!billingData.schooles.length) ? true : false">
+                            <td colspan="8">
+                              <div class="text-center">No record found.</div>
+                            </td>
+                          </tr>
+                         <tr>
+                           <td colspan="8">
+                              <span class="pull-right"><b>County Total:</b> ${{(billingAmount[billingIndex]) ? billingAmount[billingIndex] : 0}}</span>
+                           </td>
+                         </tr>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+              </div>
+   
+          </div>
+          <div class="text-center" ng-show="noCountyFound">
+             No record found.
+          </div>           
+        </div>
+      
+  </div>
+</div>
+
+
+
+
+<!-- model start popup for delete teachers-->
+<div class="modal fade" id="editDescription" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Note
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                  <form class="form-horizontal"> 
+                   <div class="form-group">
+                     <textarea name="description" class="form-control" ng-model="billingNote"></textarea>
+                   </div>
+                 <div class="form-group">
+                        <div class="col-sm-12">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                              <button type="button" ng-show="districtNote" class="btn btn-success" ng-disabled="noteSaveBtn" ng-click="updateDistrictStatus('','','','note','')">Save  <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="noteSaveBtn"></i></button>
+
+                              <button type="button" ng-show="schoolNote" class="btn btn-success" ng-disabled="noteSaveBtn" ng-click="changeBillingStatus('','','','note','')">Save  <i class="fa fa-spinner fa-2 fa-spin" aria-hidden="true" ng-show="noteSaveBtn"></i></button>
+                   </div>
+                    
+               </div>
+               </form>
+            </div>
+ 
+        </div>
+    </div>
+</div>
+
+
+ 
